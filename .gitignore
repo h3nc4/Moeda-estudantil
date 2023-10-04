@@ -1,0 +1,6 @@
+modules
+static
+*.sqlite3
+__pycache__
+*_*.py
+r*.sh
