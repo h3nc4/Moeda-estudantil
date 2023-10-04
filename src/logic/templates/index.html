@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Bem vindo a Moeda</h1>
+    {% if user.is_authenticated and not user.isAgente %}
+    <p>Você está logado como {{ user.username }}.</p>
+    {% else %}
+    <p class="lead">Você não está logado.</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Log In</a>
+    <a class="btn btn-success btn-lg" href="{% url 'cadastro' %}" role="button">Cadastrar</a>
+    {% endif %}
+</div>
+{% endblock %}
