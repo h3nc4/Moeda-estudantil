@@ -6,7 +6,7 @@
 
 ## Casos de uso
 
-![caso](./casos/CasoUso.png)
+![caso](./casos_de_uso/casos.png)
 
 ## Histórias de Usuários
 
