@@ -17,7 +17,48 @@
 # <https://www.gnu.org/licenses/>.
 
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 class Usuario(AbstractUser):
-    def __str__(self):
-        return self.username
+    pass
+
+class Endereco(models.Model):
+    estado = models.CharField(max_length=2)
+    cidade = models.CharField(max_length=50)
+    bairro = models.CharField(max_length=50)
+    rua = models.CharField(max_length=50)
+    numero = models.IntegerField()
+    complemento = models.CharField(max_length=50, blank=True, default='')
+
+class Vantagem(models.Model):
+    descricao = models.CharField(max_length=200)
+    valor = models.IntegerField()
+
+class Transacao(models.Model):
+    moedas = models.IntegerField()
+    mensagem = models.CharField(max_length=200, blank=True, default='Mensagem não especificada')
+    para_quem = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='para_quem')
+
+class Turma(models.Model):
+    id = models.AutoField(primary_key=True)
+
+class Membro(models.Model):
+    user = models.OneToOneField(Usuario, on_delete=models.CASCADE, primary_key=True)
+    cpf = models.CharField(max_length=11, unique=True)
+    turmas = models.ManyToManyField(Turma)
+    moedas = models.IntegerField(default=0, blank=True)
+    transacoes = models.ManyToManyField(Transacao, blank=True)
+    class Meta:
+        abstract = True
+
+class Aluno(Membro):
+    email = models.EmailField()
+    rg = models.CharField(max_length=20)
+    endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE)
+    vantagens = models.ManyToManyField(Vantagem)
+
+class Professor(Membro):
+    pass
+
+class Empresa(Usuario):
+    pass
