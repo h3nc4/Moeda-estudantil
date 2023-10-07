@@ -16,10 +16,11 @@
 # General Public License along with Moeda estudantil. If not, see
 # <https://www.gnu.org/licenses/>.
 
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
 from django.contrib.auth import logout as _logout
 from django.contrib.auth import login as _login
+from django.contrib.auth.hashers import make_password
 
 from .models import *
 
@@ -29,22 +30,24 @@ def index(request):
 def login(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
-        senha = request.POST.get('senha')
-        user = authenticate(request, username=nome, password=senha)
+        senha_crua = request.POST.get('senha')
+        print(nome, senha_crua)
+        user = authenticate(request, username=nome, password=senha_crua)
         if user:
             _login(request, user)
-            return HttpResponse(f'<script>window.location.href = "/"</script>')
+            return redirect('/')
         return render(request, 'login.html', {'erro': 'Usuário ou senha incorretos.'})
     return render(request, 'login.html')
 
 def logout(request):
     _logout(request)
-    return HttpResponse(f'<script>window.location.href = "/"</script>')
+    return redirect('/')
 
 def cadastro(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
-        senha = request.POST.get('senha')
+        senha_crua = request.POST.get('senha')
+        senha = make_password(senha_crua)
         email = request.POST.get('email')
         cpf = request.POST.get('cpf')
         rg = request.POST.get('rg')
@@ -69,13 +72,14 @@ def cadastro(request):
         usuario_aluno.save()
         aluno.save()
         _login(request, usuario_aluno)
-        return HttpResponse(f'<script>window.location.href = "/"</script>')
+        return redirect('/')
     return render(request, 'cadastro.html')
 
 def cadastro_professor(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
-        senha = request.POST.get('senha')
+        senha_crua = request.POST.get('senha')
+        senha = make_password(senha_crua)
         cpf = request.POST.get('cpf')
         if not (nome and senha and cpf):
             return render(request, 'cadastro_professor.html', {'erro': 'Preencha todos os campos.'})
@@ -86,13 +90,14 @@ def cadastro_professor(request):
         usuario_prof.save()
         professor.save()
         _login(request, usuario_prof)
-        return HttpResponse(f'<script>window.location.href = "/"</script>')
+        return redirect('/')
     return render(request, 'cadastro_professor.html')
 
 def cadastro_empresa(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
-        senha = request.POST.get('senha')
+        senha_crua = request.POST.get('senha')
+        senha = make_password(senha_crua)
         if not (nome and senha):
             return render(request, 'cadastro_empresa.html', {'erro': 'Preencha todos os campos.'})
         if Usuario.objects.filter(username=nome):
@@ -100,6 +105,6 @@ def cadastro_empresa(request):
         empresa = Usuario.objects.create(username=nome, password=senha, e_empresa=True)
         empresa.save()
         _login(request, empresa)
-        return HttpResponse(f'<script>window.location.href = "/"</script>')
+        return redirect('/')
     return render(request, 'cadastro_empresa.html')
     
