@@ -4,6 +4,11 @@
 
 {% block content %}
 <h1 class="text-center">Login</h1>
+{% if erro %}
+  <div class="alert alert-danger">
+    {{ erro }}
+  </div>
+{% endif %}
 <form action="{% url 'login' %}" method="post" class="col-md-6 offset-md-3">
     {% csrf_token %}
     <div class="form-group">

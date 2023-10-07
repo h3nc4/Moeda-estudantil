@@ -5,12 +5,21 @@
 {% block content %}
 <div class="jumbotron">
     <h1 class="display-4">Bem vindo a Moeda</h1>
-    {% if user.is_authenticated and not user.isAgente %}
-    <p>Você está logado como {{ user.username }}.</p>
+    {% if user.is_authenticated %}
+    <p>Você está logado como
+        {% if user.e_empresa %}
+        Empresa
+        {% elif user.aluno %}
+        Aluno
+        {% else %}
+        Professor
+        {% endif %}
+        {{ user.username }}.</p>
     {% else %}
     <p class="lead">Você não está logado.</p>
     <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Log In</a>
     <a class="btn btn-success btn-lg" href="{% url 'cadastro' %}" role="button">Cadastrar</a>
+    <a class="btn btn-success btn-lg" href="{% url 'cadastro_empresa' %}" role="button">Empresa</a>
     {% endif %}
 </div>
 {% endblock %}
