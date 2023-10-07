@@ -19,46 +19,50 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class Usuario(AbstractUser):
-    pass
-
 class Endereco(models.Model):
     estado = models.CharField(max_length=2)
     cidade = models.CharField(max_length=50)
     bairro = models.CharField(max_length=50)
     rua = models.CharField(max_length=50)
     numero = models.IntegerField()
-    complemento = models.CharField(max_length=50, blank=True, default='')
+    complemento = models.CharField(max_length=10, blank=True, default=None)
 
 class Vantagem(models.Model):
-    descricao = models.CharField(max_length=200)
+    descricao = models.TextField()
     valor = models.IntegerField()
 
-class Transacao(models.Model):
-    moedas = models.IntegerField()
-    mensagem = models.CharField(max_length=200, blank=True, default='Mensagem não especificada')
-    para_quem = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='para_quem')
-
 class Turma(models.Model):
-    id = models.AutoField(primary_key=True)
+    pass
+
+class Usuario(AbstractUser):
+    e_empresa = models.BooleanField(default=False)
+    aluno = models.OneToOneField('Aluno', on_delete=models.CASCADE, blank=True, null=True)
+    professor = models.OneToOneField('Professor', on_delete=models.CASCADE, blank=True, null=True)
+
+    # Os campos abaixo são herdados de AbstractUser mas desnecessários para o Usuário padrão 
+    first_name = None
+    last_name = None
+    email = None
+
+class Transacao(models.Model):
+    moedas = models.PositiveIntegerField()
+    mensagem = models.CharField(max_length=200, blank=True, default='Mensagem não especificada')
+    de_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='de_usuario')
+    para_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='para_usuario')
 
 class Membro(models.Model):
-    user = models.OneToOneField(Usuario, on_delete=models.CASCADE, primary_key=True)
     cpf = models.CharField(max_length=11, unique=True)
     turmas = models.ManyToManyField(Turma)
-    moedas = models.IntegerField(default=0, blank=True)
-    transacoes = models.ManyToManyField(Transacao, blank=True)
+    moedas = models.PositiveIntegerField(default=0, blank=True)
+    transacoes = models.ManyToManyField(Transacao)
     class Meta:
         abstract = True
 
 class Aluno(Membro):
     email = models.EmailField()
-    rg = models.CharField(max_length=20)
+    rg = models.CharField(max_length=10)
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE)
     vantagens = models.ManyToManyField(Vantagem)
 
 class Professor(Membro):
-    pass
-
-class Empresa(Usuario):
     pass
