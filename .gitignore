@@ -1,6 +1,7 @@
 modules
 static
 *.sqlite3
-__pycache__
+__*
 *_*.py
 r*.sh
+*.dot

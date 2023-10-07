@@ -15,18 +15,26 @@ python src/manage.py makemigrations
 python src/manage.py migrate
 ```
 
-use `deactivate` para sair do ambiente virtual
+Use `deactivate` para sair do ambiente virtual.
+
+Use `source modules/bin/activate` antes de executar qualquer dos seguintes comandos.
 
 ## Execução
 
 ```bash
-source modules/bin/activate
 python src/manage.py runserver
 ```
 
 ## Criação do primeiro usuário
 
 ```bash
-source modules/bin/activate
 python src/manage.py createsuperuser
+```
+
+## Gerar modelo ER
+
+```bash
+python src/manage.py graph_models logic -o tmp.dot
+dot -Tpng tmp.dot -o ./docs/db/Modelo_ER.png
+rm tmp.dot
 ```
