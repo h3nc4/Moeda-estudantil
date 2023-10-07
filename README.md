@@ -9,11 +9,11 @@
 ## Estrutura
 
 ```bash
-├── docs/
+├── docs/ - Documentação do projeto e descrição do sistema
 │   ├── classes/ - Diagrama de classes
-│   ├── casos_de_uso/ - Diagrama de casos de uso
+│   ├── casos_de_uso/ - Diagrama de casos de uso e histórias de usuário
 │   ├── db/ - Modelo ER e Definição da estratégia de acesso ao banco de dados
-├── src/
+├── src/ - Código fonte e instruções para instalação e execução do projeto
 │   ├── app/ - Arquivos de configuração do Django
 │   ├── logic/ - Lógica da aplicação
 │   │  ├── migrations/ - Migrações do banco de dados
