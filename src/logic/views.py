@@ -17,94 +17,87 @@
 # <https://www.gnu.org/licenses/>.
 
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate
-from django.contrib.auth import logout as _logout
-from django.contrib.auth import login as _login
+from django.contrib.auth import authenticate, logout as _logout, login as _login
 from django.contrib.auth.hashers import make_password
+from .models import Usuario, Aluno, Professor, Endereco
 
-from .models import *
-
+# Página inicial
 def index(request):
     return render(request, 'index.html')
 
+# Faz o login de um usuário e o redireciona para a página inicial
 def login(request):
     if request.method == 'POST':
-        nome = request.POST.get('nome')
-        senha_crua = request.POST.get('senha')
-        print(nome, senha_crua)
-        user = authenticate(request, username=nome, password=senha_crua)
+        user = authenticate(request, username=request.POST.get('nome'), password=request.POST.get('senha') )
         if user:
             _login(request, user)
             return redirect('/')
         return render(request, 'login.html', {'erro': 'Usuário ou senha incorretos.'})
     return render(request, 'login.html')
 
+# Faz o logout de um usuário e o redireciona para a página inicial
 def logout(request):
     _logout(request)
     return redirect('/')
 
-def cadastro(request):
-    if request.method == 'POST':
-        nome = request.POST.get('nome')
-        senha_crua = request.POST.get('senha')
-        senha = make_password(senha_crua)
-        email = request.POST.get('email')
-        cpf = request.POST.get('cpf')
-        rg = request.POST.get('rg')
-        estado = request.POST.get('estado')
-        cidade = request.POST.get('cidade')
-        bairro = request.POST.get('bairro')
-        rua = request.POST.get('rua')
-        numero = request.POST.get('numero')
-        complemento = request.POST.get('complemento')
-        if not (nome and senha and email and cpf and rg and estado and cidade and bairro and rua and numero):
-            return render(request, 'cadastro.html', {'erro': 'Preencha os campos obrigatórios.'})
-        if Usuario.objects.filter(username=nome):
-            return render(request, 'cadastro.html', {'erro': 'Usuário já cadastrado.'})
-        endereco = Endereco.objects.filter(estado=estado, cidade=cidade, bairro=bairro, rua=rua, numero=numero, complemento=complemento)
-        if endereco:
-            endereco = endereco[0]
-        else:
-            endereco = Endereco.objects.create(estado=estado, cidade=cidade, bairro=bairro, rua=rua, numero=numero, complemento=complemento)
-            endereco.save()
-        aluno = Aluno.objects.create(email=email, cpf=cpf, rg=rg, endereco=endereco)
-        usuario_aluno = Usuario.objects.create(username=nome, password=senha, aluno=aluno)
-        usuario_aluno.save()
-        aluno.save()
-        _login(request, usuario_aluno)
-        return redirect('/')
-    return render(request, 'cadastro.html')
-
+# Página de cadastro de professor, apenas envia o template e o tipo de usuário para a função de cadastro
 def cadastro_professor(request):
-    if request.method == 'POST':
-        nome = request.POST.get('nome')
-        senha_crua = request.POST.get('senha')
-        senha = make_password(senha_crua)
-        cpf = request.POST.get('cpf')
-        if not (nome and senha and cpf):
-            return render(request, 'cadastro_professor.html', {'erro': 'Preencha todos os campos.'})
-        if Usuario.objects.filter(username=nome):
-            return render(request, 'cadastro_professor.html', {'erro': 'Usuário já cadastrado.'})
-        professor = Professor.objects.create(cpf=cpf)
-        usuario_prof = Usuario.objects.create(username=nome, password=senha, professor=professor)
-        usuario_prof.save()
-        professor.save()
-        _login(request, usuario_prof)
-        return redirect('/')
-    return render(request, 'cadastro_professor.html')
+    return cadastro(request, template_name='cadastro_professor.html', user_type='professor')
 
+# Página de cadastro de empresa, apenas envia o template e o tipo de usuário para a função de cadastro
 def cadastro_empresa(request):
+    return cadastro(request, template_name='cadastro_empresa.html', user_type='empresa')
+
+# Página de cadastro, por padrão realiza o cadastro de um aluno, mas pode ser usado para outros tipos de usuário
+def cadastro(request, template_name='cadastro.html', user_type='aluno'):
     if request.method == 'POST':
+
+        # Pega os dados em comum entre os todos os tipos de usuário
         nome = request.POST.get('nome')
         senha_crua = request.POST.get('senha')
-        senha = make_password(senha_crua)
-        if not (nome and senha):
-            return render(request, 'cadastro_empresa.html', {'erro': 'Preencha todos os campos.'})
+        if not (nome and senha_crua):
+            return render(request, template_name, {'erro': 'Preencha todos os campos.'})
+        
+        # Verifica se o usuário já existe
         if Usuario.objects.filter(username=nome):
-            return render(request, 'cadastro_empresa.html', {'erro': 'Usuario já cadastrada.'})
-        empresa = Usuario.objects.create(username=nome, password=senha, e_empresa=True)
-        empresa.save()
-        _login(request, empresa)
+            return render(request, template_name, {'erro': 'Usuário já cadastrado.'})
+
+        # Usado para enviar o objeto criado para o usuário
+        tipo_e_objeto = {}
+
+        # Se o usuário for um aluno, cria um endereço e um aluno
+        if user_type == 'aluno':
+            email = request.POST.get('email')
+            cpf = request.POST.get('cpf')
+            rg = request.POST.get('rg')
+            estado = request.POST.get('estado')
+            cidade = request.POST.get('cidade')
+            bairro = request.POST.get('bairro')
+            rua = request.POST.get('rua')
+            numero = request.POST.get('numero')
+            complemento = request.POST.get('complemento')
+            if not (email and cpf and rg and estado and cidade and bairro and rua and numero):
+                return render(request, template_name, {'erro': 'Preencha os campos obrigatórios.'})
+
+            tipo_e_objeto['aluno'] = Aluno.objects.create(email=email, cpf=cpf, rg=rg, 
+                # Cria o endereço ou pega um já existente com os mesmos dados
+                endereco=Endereco.objects.get_or_create(
+                    estado=estado, cidade=cidade, bairro=bairro, rua=rua, numero=numero, complemento=complemento
+                )[0]
+            )
+
+        # Se o usuário for um professor, cria um professor
+        elif user_type == 'professor':
+            cpf = request.POST.get('cpf')
+            if not cpf:
+                return render(request, template_name, {'erro': 'Preencha todos os campos.'})
+            tipo_e_objeto['professor'] = Professor.objects.create(cpf=cpf)
+
+        # Se o usuário for uma empresa, cria uma empresa
+        elif user_type == 'empresa':
+            tipo_e_objeto['e_empresa'] = True
+        usuario = Usuario.objects.create(username=nome, password=make_password(senha_crua), **tipo_e_objeto)
+        usuario.save()
+        _login(request, usuario)
         return redirect('/')
-    return render(request, 'cadastro_empresa.html')
-    
+    return render(request, template_name)
