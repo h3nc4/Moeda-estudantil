@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Cadastro para Empresas</h1>
+{% if erro %}
+<div class="alert alert-danger">
+    {{ erro }}
+</div>
+{% endif %}
+<form action="{% url 'cadastro_empresa' %}" method="post" class="col-md-6 offset-md-3">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="nome">Nome</label>
+        <input type="text" name="nome" id="nome" class="form-control" placeholder="Nome" required>
+    </div>
+    <div class="form-group">
+        <label for="senha">Senha</label>
+        <input type="password" name="senha" id="senha" class="form-control" placeholder="Senha" required>
+    </div>
+    <input type="submit" value="Cadastrar" class="btn btn-primary">
+</form>
+{% endblock %}
