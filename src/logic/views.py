@@ -19,7 +19,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout as _logout, login as _login
 from django.contrib.auth.hashers import make_password
-from .models import Usuario, Aluno, Professor, Endereco
+from .models import Usuario, Aluno, Professor, Empresa, Endereco
 
 # Página inicial
 def index(request):
@@ -95,9 +95,15 @@ def cadastro(request, template_name='cadastro.html', user_type='aluno'):
 
         # Se o usuário for uma empresa, cria uma empresa
         elif user_type == 'empresa':
-            tipo_e_objeto['empresa'] = True
+            tipo_e_objeto['empresa'] = Empresa.objects.create()
         usuario = Usuario.objects.create(username=nome, password=make_password(senha_crua), **tipo_e_objeto)
         usuario.save()
         _login(request, usuario)
         return redirect('/')
     return render(request, template_name)
+
+# Página principal para empresas
+def empresa(request):
+    if not request.user.is_authenticated or not request.user.empresa:
+        return redirect('/')
+    return render(request, 'empresa.html', {'vantagens': request.user.empresa.vantagem_set.all()})

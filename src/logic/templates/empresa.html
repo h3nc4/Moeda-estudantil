@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Página da Empresa{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-5">Bem-vindo empresa: {{ user.username }}</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>Suas Vantagens</h2>
+        {% if vantagens|length == 0 %}
+        <p>Não há vantagens cadastradas.</p>
+        {% else %}
+        <ul class="list-group">
+            {% for vantagem in vantagens %}
+            <li class="list-group-item">{{ vantagem.descricao }} - Valor: {{ vantagem.valor }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <h2>Opções</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><a href="#">Histórico de Transações</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
