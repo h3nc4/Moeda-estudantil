@@ -27,22 +27,24 @@ class Endereco(models.Model):
     numero = models.IntegerField()
     complemento = models.CharField(max_length=10, blank=True, default=None)
 
+class Empresa(models.Model):
+    pass
+
 class Vantagem(models.Model):
     descricao = models.TextField()
     valor = models.IntegerField()
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
 
 class Turma(models.Model):
     pass
 
 class Usuario(AbstractUser):
-    e_empresa = models.BooleanField(default=False)
+    empresa = models.OneToOneField(Empresa, on_delete=models.CASCADE, blank=True, null=True)
     aluno = models.OneToOneField('Aluno', on_delete=models.CASCADE, blank=True, null=True)
     professor = models.OneToOneField('Professor', on_delete=models.CASCADE, blank=True, null=True)
 
     # Os campos abaixo são herdados de AbstractUser mas desnecessários para o Usuário padrão 
-    first_name = None
-    last_name = None
-    email = None
+    first_name = None; last_name = None; email = None
 
 class Transacao(models.Model):
     moedas = models.PositiveIntegerField()

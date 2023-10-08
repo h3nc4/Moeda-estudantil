@@ -20,7 +20,7 @@ from django.urls import path, include
 from . import views
 
 url_empresa = [
-    #path('', views.empresa, name='empresa'),
+    path('', views.empresa, name='empresa'),
     path('cadastro/', views.cadastro_empresa, name='cadastro_empresa'),
 ]
 

@@ -95,7 +95,7 @@ def cadastro(request, template_name='cadastro.html', user_type='aluno'):
 
         # Se o usuário for uma empresa, cria uma empresa
         elif user_type == 'empresa':
-            tipo_e_objeto['e_empresa'] = True
+            tipo_e_objeto['empresa'] = True
         usuario = Usuario.objects.create(username=nome, password=make_password(senha_crua), **tipo_e_objeto)
         usuario.save()
         _login(request, usuario)
