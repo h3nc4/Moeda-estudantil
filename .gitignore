@@ -1,4 +1,4 @@
-modules
+.venv
 static
 *.sqlite3
 __*

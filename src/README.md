@@ -7,17 +7,18 @@ sudo apt install python3 python3-pip python3-venv -y
 git clone https://github.com/h3nc4/Moeda-estudantil.git
 mv Moeda-estudantil moeda-estudantil
 cd moeda-estudantil
-python3 -m venv modules
-source modules/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r src/requirements.txt
 mkdir src/logic/migrations
+touch src/logic/migrations/__init__.py
 python src/manage.py makemigrations
 python src/manage.py migrate
 ```
 
 Use `deactivate` para sair do ambiente virtual.
 
-Use `source modules/bin/activate` antes de executar qualquer dos seguintes comandos.
+Use `source .venv/bin/activate` antes de executar qualquer dos seguintes comandos.
 
 ## Execução
 
