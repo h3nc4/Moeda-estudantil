@@ -49,14 +49,13 @@ class Usuario(AbstractUser):
 class Transacao(models.Model):
     moedas = models.PositiveIntegerField()
     mensagem = models.CharField(max_length=200, blank=True, default='Mensagem não especificada')
-    de_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='de_usuario')
-    para_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='para_usuario')
+    de = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='de_usuario')
+    para = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='para_usuario')
 
 class Membro(models.Model):
     cpf = models.CharField(max_length=11, unique=True)
     turmas = models.ManyToManyField(Turma)
     moedas = models.PositiveIntegerField(default=0, blank=True)
-    transacoes = models.ManyToManyField(Transacao)
     class Meta:
         abstract = True
 
