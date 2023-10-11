@@ -49,8 +49,8 @@ class Usuario(AbstractUser):
 class Transacao(models.Model):
     moedas = models.PositiveIntegerField()
     mensagem = models.CharField(max_length=200, blank=True, default='Mensagem não especificada')
-    de = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='de_usuario')
-    para = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='para_usuario')
+    de = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='de_user')
+    para = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='para_user')
 
 class Membro(models.Model):
     cpf = models.CharField(max_length=11, unique=True)
@@ -62,7 +62,7 @@ class Membro(models.Model):
 class Aluno(Membro):
     email = models.EmailField()
     rg = models.CharField(max_length=10)
-    endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE)
+    endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
     vantagens = models.ManyToManyField(Vantagem)
 
 class Professor(Membro):
