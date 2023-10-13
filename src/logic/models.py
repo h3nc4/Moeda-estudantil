@@ -19,6 +19,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+class Sistema(models.Model):
+    semestre = models.PositiveIntegerField(default=1)
+
 class Endereco(models.Model):
     estado = models.CharField(max_length=2)
     cidade = models.CharField(max_length=50)

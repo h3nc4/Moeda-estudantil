@@ -16,12 +16,11 @@
 # General Public License along with Moeda estudantil. If not, see
 # <https://www.gnu.org/licenses/>.
 
-from django.apps import AppConfig
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
+from .models import Sistema
 
-
-class LogicConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'logic'
-
-    def ready(self):
-        from . import signals
+@receiver(post_migrate)
+def inicializa_semestre(sender, **kwargs):
+    if not Sistema.objects.exists():
+        Sistema.objects.create()

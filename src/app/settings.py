@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    "logic"
+    "logic",
 ]
 
 MIDDLEWARE = [
@@ -53,7 +53,7 @@ MIDDLEWARE = [
 
 HTML_MINIFY = True
 
-ROOT_URLCONF = 'app.urls'
+ROOT_URLCONF = 'logic.urls'
 
 TEMPLATES = [
     {
