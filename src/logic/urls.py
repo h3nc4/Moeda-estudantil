@@ -38,6 +38,9 @@ urlpatterns = [
     path('cadastro/', views.cadastro, name='cadastro'),
     path('turmas/', views.turmas, name='turmas'),
     path('turma/<int:id>', views.turma, name='turma'),
+    path('enviar_moeda/<int:id>', views.enviar_moeda, name='enviar_moeda'),
+    path('vantagem/<int:id>', views.vantagem, name='vantagem'),
+    path('vantagens/', views.vantagens, name='vantagens'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
 ]

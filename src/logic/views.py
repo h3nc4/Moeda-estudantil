@@ -20,11 +20,13 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout as _logout, login as _login
 from django.contrib.auth.hashers import make_password
 from django.db.models import F
+from django.http import HttpResponseNotAllowed
+import base64
 from .models import *
 
 # Página inicial
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'index.html', {'turmas': Turma.objects.all().count(), 'semestre': Sistema.objects.first().semestre})
 
 # Faz o login de um usuário e o redireciona para a página inicial
 def login(request):
@@ -54,14 +56,12 @@ def cadastro_empresa(request):
 # Página de cadastro, por padrão realiza o cadastro de um aluno, mas pode ser usado para outros tipos de usuário
 def cadastro(request, template_name='cadastro.html', user_type='aluno'):
     if request.method == 'POST':
-
         # Pega os dados em comum entre os todos os tipos de usuário
         nome = request.POST.get('nome')
         senha_crua = request.POST.get('senha')
         email = request.POST.get('email')
         if not (nome and senha_crua):
             return render(request, template_name, {'erro': 'Preencha todos os campos.'})
-        
         # Verifica se o usuário já existe
         if Usuario.objects.filter(username=nome):
             return render(request, template_name, {'erro': 'Usuário já cadastrado.'})
@@ -100,7 +100,8 @@ def cadastro(request, template_name='cadastro.html', user_type='aluno'):
         elif user_type == 'empresa':
             tipo_e_objeto['empresa'] = Empresa.objects.create()
         usuario = Usuario.objects.create(username=nome, password=make_password(senha_crua), email=email, **tipo_e_objeto)
-        _login(request, usuario)
+        if user_type != 'professor':
+            _login(request, usuario)
         return redirect('/')
     return render(request, template_name)
 
@@ -117,9 +118,10 @@ def nova_vantagem(request):
     if request.method == 'POST':
         descricao = request.POST.get('descricao')
         valor = request.POST.get('valor')
-        if not (descricao and valor):
+        imagem = request.FILES.get('imagem')
+        if not (valor and imagem):
             return render(request, 'nova_vantagem.html', {'erro': 'Preencha todos os campos.'})
-        Vantagem.objects.create( descricao=descricao, valor=valor, empresa=request.user.empresa)
+        Vantagem.objects.create(descricao=descricao, valor=valor, empresa=request.user.empresa, imagem=base64.b64encode(imagem.read()).decode('utf-8'))
         return redirect('/empresa/')
     return render(request, 'nova_vantagem.html')
 
@@ -127,12 +129,41 @@ def nova_vantagem(request):
 def avanca_semestre(request):
     if not request.user.is_authenticated or not request.user.is_superuser:
         return err403(request)
-    try:
-        Professor.objects.all().update(moedas=F('moedas') + 1000)
-        return redirect('/')
-    except Exception as e:
-        return render(request, 'error.html', {'erro': f'Erro ao avançar o semestre: {str(e)}'})
+    Professor.objects.all().update(moedas=F('moedas') + 1000)
+    sys_config = Sistema.objects.first()
+    sys_config.semestre += 1
+    sys_config.save()
+    return redirect('/')
 
-# Página de erro 403
+# Página de turmas
+def turmas(request):
+    if not request.user.is_authenticated or (not request.user.professor and not request.user.aluno):
+        return err403(request)
+    if request.method == 'POST':
+        turma = request.POST.get('turma')
+        if not turma:
+            return render(request, 'turmas.html', {'erro': 'Selecione uma turma.'})
+        if request.user.aluno:
+            request.user.aluno.turmas.add(Turma.objects.get(id=turma))
+        elif request.user.professor:
+            request.user.professor.turmas.add(Turma.objects.get(id=turma))
+        return redirect('/')
+    return render(request, 'turmas.html', {'suas_turmas': request.user.aluno.turmas.all() if request.user.aluno else request.user.professor.turmas.all(), 'turmas': Turma.objects.all()})
+
+# Página de uma turma
+def turma(request, id):
+    if not request.user.is_authenticated or not request.user.professor:
+        return err403(request)
+    turma = Turma.objects.get(id=id)
+    return render(request, 'turma.html', {'professor': turma.professor_set.first(), 'alunos': turma.aluno_set.all(), 'turma': turma})
+
+# Página de cadastro de turmas, cria e insere uma turma no banco de dados
+def cadastrar_turma(request):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        return err403(request)
+    Turma.objects.create()
+    return redirect('/')
+
+# Página de erro 403, 'forbidden'
 def err403(request):
     return render(request, '403.html', status=403)
