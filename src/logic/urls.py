@@ -29,6 +29,8 @@ urlpatterns = [
     path('empresa/', include(url_empresa)),
     path('', views.index, name='index'),
     path('cadastro/', views.cadastro, name='cadastro'),
+    path('cadastro_professor/', views.cadastro_professor, name='cadastro_professor'),
+    path('avanca_semestre/', views.avanca_semestre, name='avanca_semestre'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
 ]

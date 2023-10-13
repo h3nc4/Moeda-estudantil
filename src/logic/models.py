@@ -42,9 +42,10 @@ class Usuario(AbstractUser):
     empresa = models.OneToOneField(Empresa, on_delete=models.CASCADE, blank=True, null=True)
     aluno = models.OneToOneField('Aluno', on_delete=models.CASCADE, blank=True, null=True)
     professor = models.OneToOneField('Professor', on_delete=models.CASCADE, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
 
     # Os campos abaixo são herdados de AbstractUser mas desnecessários para o Usuário padrão 
-    first_name = None; last_name = None; email = None
+    first_name = None; last_name = None
 
 class Transacao(models.Model):
     moedas = models.PositiveIntegerField()
@@ -60,7 +61,6 @@ class Membro(models.Model):
         abstract = True
 
 class Aluno(Membro):
-    email = models.EmailField()
     rg = models.CharField(max_length=10)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
     vantagens = models.ManyToManyField(Vantagem)
