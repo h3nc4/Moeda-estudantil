@@ -164,6 +164,57 @@ def cadastrar_turma(request):
     Turma.objects.create()
     return redirect('/')
 
+def enviar_moeda(request, id):
+    if not request.user.is_authenticated or not request.user.professor:
+        return err403(request)
+    aluno = Usuario.objects.get(id=id).aluno
+    professor = request.user.professor
+    if request.method == 'POST':
+        moedas = request.POST.get('quantidade_moedas')
+        mensagem = request.POST.get('mensagem')
+        if not moedas:
+            return render(request, 'error.html', {'erro': 'Preencha todos os campos.'})
+        try:
+            moedas = int(moedas)
+        except:
+            return render(request, 'error.html', {'erro': 'São aceitos apenas números inteiros.'})
+        if moedas < 0:
+            return render(request, 'error.html', {'erro': 'Não é possível enviar moedas negativas.'})
+        if moedas > request.user.professor.moedas:
+            return render(request, 'error.html', {'erro': 'Você não tem moedas suficientes.'})
+        professor.moedas -= moedas
+        professor.save()
+        aluno.moedas += moedas
+        aluno.save()
+        Transacao.objects.create(moedas=moedas, mensagem=mensagem, de=request.user, para=aluno.usuario)
+        return redirect('/')
+    return HttpResponseNotAllowed(['POST'])
+
+# Página de vantagens
+def vantagens(request):
+    if not request.user.is_authenticated or not request.user.aluno:
+        return err403(request)
+    return render(request, 'vantagens.html', {
+        'vantagens': Vantagem.objects.exclude(id__in=request.user.aluno.vantagens.values_list('id', flat=True)),
+        'compradas': request.user.aluno.vantagens.all()
+    })
+
+# Compra de uma vantagem
+def vantagem(request, id):
+    if not request.user.is_authenticated or not request.user.aluno:
+        return err403(request)
+    vantagem = Vantagem.objects.get(id=id)
+    aluno = request.user.aluno
+    if request.method == 'POST':
+        if aluno.moedas < vantagem.valor:
+            return render(request, 'error.html', {'erro': 'Você não tem moedas suficientes.'})
+        aluno.moedas -= vantagem.valor
+        aluno.vantagens.add(vantagem)
+        aluno.save()
+        Transacao.objects.create(moedas=vantagem.valor, de=aluno.usuario, para=vantagem.empresa.usuario)
+        return redirect('/')
+    return HttpResponseNotAllowed(['POST'])
+
 # Página de erro 403, 'forbidden'
 def err403(request):
     return render(request, '403.html', status=403)
