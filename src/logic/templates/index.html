@@ -14,21 +14,41 @@
         Administrador
         {% endif %}
         {{ user.username }}.</p>
+
+    <!-- Área de empresa -->
     {% if user.empresa %}
     <a class="btn btn-primary btn-lg" href="{% url 'empresa' %}" role="button">Benefícios</a>
+
+    <!-- Área de professor -->
     {% elif user.professor %}
     <p>Você tem atualmente {{ user.professor.moedas }} moedas.</p>
-    <a class="btn btn-primary btn-lg" href="#" role="button">Turmas</a>
+    <a class="btn btn-primary btn-lg" href="{% url 'turmas' %}" role="button">Turmas</a>
+
+    <!-- Área de aluno -->
+    {% elif user.aluno %}
+    <p>Você tem atualmente {{ user.aluno.moedas }} moedas.</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'turmas' %}" role="button">Turmas</a>
+    <a class="btn btn-primary btn-lg" href="{% url 'vantagens' %}" role="button">Ver Benefícios</a>
+
+    <!-- Área de administrador -->
     {% elif user.is_superuser %}
     <a class="btn btn-primary btn-lg" href="{% url 'cadastro_professor' %}" role="button">Cadastrar Professor</a>
     <a class="btn btn-primary btn-lg" href="{% url 'avanca_semestre' %}" role="button">Avançar Semestre</a>
+    <a class="btn btn-primary btn-lg" href="{% url 'cadastrar_turma' %}" role="button">Cadastrar Turma</a>
     {% endif %}
+
+    <!-- Área de usuário não logado -->
     {% else %}
     <p class="lead">Você não está logado.</p>
     <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Log In</a>
-    <p class="mt-5">Não tem uma conta?</p>
+    <p class="mt-4">Não tem uma conta?</p>
     <a class="btn btn-success btn-lg" href="{% url 'cadastro' %}" role="button">Aluno</a>
     <a class="btn btn-success btn-lg" href="{% url 'cadastro_empresa' %}" role="button">Empresa</a>
     {% endif %}
+
+    <!-- Info sobre o sistema -->
+    <hr class="my-4">
+    <p class="mt-4">Estamos atualmente no semestre {{ semestre }}</p>
+    <p>Temos {{ turmas }} turmas cadastradas.</p>
 </div>
 {% endblock %}

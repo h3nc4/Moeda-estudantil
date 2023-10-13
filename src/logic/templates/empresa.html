@@ -1,20 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="jumbotron">
-    <h1 class="display-5">Bem-vindo empresa: {{ user.username }}</p>
+    <h1 class="display-5">Bem-vindo à empresa: {{ user.username }}</h1>
 </div>
 
 <div class="row">
     <div class="col-md-8">
         <h2>Suas Vantagens</h2>
         {% if vantagens|length == 0 %}
-        <p>Não há vantagens cadastradas.</p>
+            <p>Não há vantagens cadastradas.</p>
         {% else %}
-        <ul class="list-group">
-            {% for vantagem in vantagens %}
-            <li class="list-group-item">{{ vantagem.descricao }} - Valor: {{ vantagem.valor }}</li>
-            {% endfor %}
-        </ul>
+            <div class="card-deck">
+                {% for vantagem in vantagens %}
+                    <div class="card mb-4">
+                        <img src="data:image/jpeg;base64,{{ vantagem.imagem }}" alt="{{ vantagem.descricao }}" class="card-img-top" style="max-height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ vantagem.descricao }}</h5>
+                            <p class="card-text">Valor: {{ vantagem.valor }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
         <a class="btn btn-primary btn-lg mt-4" href="{% url 'nova_vantagem' %}" role="button">Cadastrar Vantagem</a>
     </div>
