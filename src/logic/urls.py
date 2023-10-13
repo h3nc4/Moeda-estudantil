@@ -22,6 +22,7 @@ from . import views
 url_empresa = [
     path('', views.empresa, name='empresa'),
     path('cadastro/', views.cadastro_empresa, name='cadastro_empresa'),
+    path('nova_vantagem/', views.nova_vantagem, name='nova_vantagem'),
 ]
 
 urlpatterns = [

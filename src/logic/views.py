@@ -107,3 +107,17 @@ def empresa(request):
     if not request.user.is_authenticated or not request.user.empresa:
         return redirect('/')
     return render(request, 'empresa.html', {'vantagens': request.user.empresa.vantagem_set.all()})
+
+# Página para adicionar uma nova vantagem
+def nova_vantagem(request):
+    if not request.user.is_authenticated or not request.user.empresa:
+        return redirect('/')
+    if request.method == 'POST':
+        descricao = request.POST.get('descricao')
+        valor = request.POST.get('valor')
+        if not (descricao and valor):
+            return render(request, 'nova_vantagem.html', {'erro': 'Preencha todos os campos.'})
+        vantagem = request.user.empresa.vantagem_set.create(descricao=descricao, valor=valor, empresa=request.user.empresa)
+        vantagem.save()
+        return redirect('/empresa/')
+    return render(request, 'nova_vantagem.html')
