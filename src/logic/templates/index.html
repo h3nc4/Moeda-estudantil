@@ -1,7 +1,4 @@
 {% extends "base.html" %}
-
-{% block title %}{{ title }}{% endblock %}
-
 {% block content %}
 <div class="jumbotron">
     <h1 class="display-4">Bem vindo a Moeda</h1>
@@ -11,17 +8,26 @@
         Empresa
         {% elif user.aluno %}
         Aluno
-        {% else %}
+        {% elif user.professor %}
         Professor
+        {% else %}
+        Administrador
         {% endif %}
         {{ user.username }}.</p>
-        {% if user.empresa %}
-        <a class="btn btn-primary btn-lg" href="{% url 'empresa' %}" role="button">Benefícios</a>
-        {% endif %}
+    {% if user.empresa %}
+    <a class="btn btn-primary btn-lg" href="{% url 'empresa' %}" role="button">Benefícios</a>
+    {% elif user.professor %}
+    <p>Você tem atualmente {{ user.professor.moedas }} moedas.</p>
+    <a class="btn btn-primary btn-lg" href="#" role="button">Turmas</a>
+    {% elif user.is_superuser %}
+    <a class="btn btn-primary btn-lg" href="{% url 'cadastro_professor' %}" role="button">Cadastrar Professor</a>
+    <a class="btn btn-primary btn-lg" href="{% url 'avanca_semestre' %}" role="button">Avançar Semestre</a>
+    {% endif %}
     {% else %}
     <p class="lead">Você não está logado.</p>
     <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Log In</a>
-    <a class="btn btn-success btn-lg" href="{% url 'cadastro' %}" role="button">Cadastrar</a>
+    <p class="mt-5">Não tem uma conta?</p>
+    <a class="btn btn-success btn-lg" href="{% url 'cadastro' %}" role="button">Aluno</a>
     <a class="btn btn-success btn-lg" href="{% url 'cadastro_empresa' %}" role="button">Empresa</a>
     {% endif %}
 </div>

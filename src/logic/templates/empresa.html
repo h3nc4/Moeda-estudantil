@@ -1,7 +1,4 @@
 {% extends "base.html" %}
-
-{% block title %}Página da Empresa{% endblock %}
-
 {% block content %}
 <div class="jumbotron">
     <h1 class="display-5">Bem-vindo empresa: {{ user.username }}</p>
@@ -19,7 +16,7 @@
             {% endfor %}
         </ul>
         {% endif %}
-        <a class="btn btn-primary btn-lg" href="{% url 'nova_vantagem' %}" role="button">Cadastrar Vantagem</a>
+        <a class="btn btn-primary btn-lg mt-4" href="{% url 'nova_vantagem' %}" role="button">Cadastrar Vantagem</a>
     </div>
 
     <div class="col-md-4">

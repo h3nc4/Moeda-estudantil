@@ -24,9 +24,9 @@ SECRET_KEY = 'django-insecure-&h0gtpk11+!_8@v*t^$%1$$z#fu#isr*ty^9v0qe8wngnll@u5
 
 DEBUG = True
 
-# ALLOWED_HOSTS = ['192.168.0.151', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,7 +47,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'htmlmin.middleware.HtmlMinifyMiddleware',
+    'htmlmin.middleware.MarkRequestMiddleware',
 ]
+
+HTML_MINIFY = True
 
 ROOT_URLCONF = 'app.urls'
 

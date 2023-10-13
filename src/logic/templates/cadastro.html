@@ -1,13 +1,10 @@
 {% extends "base.html" %}
-
-{% block title %}{{ title }}{% endblock %}
-
 {% block content %}
 <h1 class="text-center">Cadastro para Alunos</h1>
 {% if erro %}
-  <div class="alert alert-danger">
+<div class="alert alert-danger">
     {{ erro }}
-  </div>
+</div>
 {% endif %}
 <form action="{% url 'cadastro' %}" method="post" class="col-md-6 offset-md-3">
     {% csrf_token %}
@@ -53,7 +50,8 @@
     </div>
     <div class="form-group">
         <label for="complemento">Complemento</label>
-        <input type="text" name="complemento" id="complemento" class="form-control" placeholder="Complemento (opcional)">
+        <input type="text" name="complemento" id="complemento" class="form-control"
+            placeholder="Complemento (opcional)">
     </div>
     <input type="submit" value="Cadastrar" class="btn btn-primary">
 </form>

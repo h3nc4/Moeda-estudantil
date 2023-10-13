@@ -1,7 +1,4 @@
 {% extends "base.html" %}
-
-{% block title %}{{ title }}{% endblock %}
-
 {% block content %}
 <h1 class="text-center">Cadastro de Professores</h1>
 {% if erro %}
@@ -9,7 +6,7 @@
     {{ erro }}
 </div>
 {% endif %}
-<form action="{% url 'cadastro' %}" method="post" class="col-md-6 offset-md-3">
+<form action="{% url 'cadastro_professor' %}" method="post" class="col-md-6 offset-md-3">
     {% csrf_token %}
     <div class="form-group">
         <label for="nome">Nome</label>
@@ -18,10 +15,6 @@
     <div class="form-group">
         <label for="senha">Senha</label>
         <input type="password" name="senha" id="senha" class="form-control" placeholder="Senha" required>
-    </div>
-    <div class="form-group">
-        <label for="email">E-mail</label>
-        <input type="email" name="email" id="email" class="form-control" placeholder="E-mail" required>
     </div>
     <div class="form-group">
         <label for="cpf">CPF</label>
