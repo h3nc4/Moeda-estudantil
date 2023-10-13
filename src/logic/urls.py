@@ -25,12 +25,19 @@ url_empresa = [
     path('nova_vantagem/', views.nova_vantagem, name='nova_vantagem'),
 ]
 
+url_admin = [
+    path('cadastro_professor/', views.cadastro_professor, name='cadastro_professor'),
+    path('avanca_semestre/', views.avanca_semestre, name='avanca_semestre'),
+    path('cadastrar_turma/', views.cadastrar_turma, name='cadastrar_turma'),
+]
+
 urlpatterns = [
+    path('admin/', include(url_admin)),
     path('empresa/', include(url_empresa)),
     path('', views.index, name='index'),
     path('cadastro/', views.cadastro, name='cadastro'),
-    path('cadastro_professor/', views.cadastro_professor, name='cadastro_professor'),
-    path('avanca_semestre/', views.avanca_semestre, name='avanca_semestre'),
+    path('turmas/', views.turmas, name='turmas'),
+    path('turma/<int:id>', views.turma, name='turma'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
 ]
