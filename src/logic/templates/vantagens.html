@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron text-center">
+  <h1 class="display-5">Veja os benefícios disponíveis</h1>
+  <p class="lead">Selecione um benefício para comprá-lo.</p>
+  <div class="row justify-content-center">
+    {% for compada in compradas %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <img src="data:image/jpeg;base64,{{ compada.imagem }}" alt="{{ compada.descricao }}" class="card-img-top" style="max-height: 200px; object-fit: cover;">
+        <div class="card-body">
+          <p class="card-text">{{ compada.descricao }}</p>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-success btn-block">Benefício já comprado</button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% for vantagem in vantagens %}
+    <div class="col-md-4 mb-4">
+      <form action="{% url 'vantagem' vantagem.id %}" method="post">
+        {% csrf_token %}
+        <div class="card h-100">
+          <img src="data:image/jpeg;base64,{{ vantagem.imagem }}" alt="{{ vantagem.descricao }}" class="card-img-top" style="max-height: 200px; object-fit: cover;">
+          <div class="card-body">
+            <h5 class="card-title">Preço: {{ vantagem.valor }} Moedas</h5>
+            <p class="card-text">{{ vantagem.descricao }}</p>
+          </div>
+          <div class="card-footer">
+            {% if user.aluno.moedas < vantagem.valor %}
+              <button class="btn btn-primary" disabled>Sem moedas suficientes</button>
+            {% else %}
+              <button type="submit" class="btn btn-primary btn-block">Comprar</button>
+            {% endif %}
+          </div>
+        </div>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  <p>Seu saldo atual é de {{ user.aluno.moedas }} moedas.</p>
+</div>
+{% endblock %}
