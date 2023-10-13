@@ -15,6 +15,9 @@
         Professor
         {% endif %}
         {{ user.username }}.</p>
+        {% if user.empresa %}
+        <a class="btn btn-primary btn-lg" href="{% url 'empresa' %}" role="button">Benefícios</a>
+        {% endif %}
     {% else %}
     <p class="lead">Você não está logado.</p>
     <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Log In</a>

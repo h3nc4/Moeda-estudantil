@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Inserir nova vantagem</h1>
+{% if erro %}
+<div class="alert alert-danger">
+    {{ erro }}
+</div>
+{% endif %}
+<form action="{% url 'nova_vantagem' %}" method="post" class="col-md-6 offset-md-3">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="descricao">Descrição</label>
+        <input type="text" name="descricao" id="descricao" class="form-control" placeholder="Descrição">
+    </div>
+    <div class="form-group">
+        <label for="valor">Valor</label>
+        <input type="number" name="valor" id="valor" class="form-control" placeholder="Valor" required>
+    </div>
+    <input type="submit" value="Cadastrar" class="btn btn-primary">
+</form>
+{% endblock %}

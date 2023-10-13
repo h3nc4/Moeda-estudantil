@@ -3,5 +3,5 @@ static
 *.sqlite3
 __*
 *_*.py
-r*.sh
+*.sh
 *.dot
