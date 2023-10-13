@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Turmas</h1>
+    <p class="lead">Aqui você pode ver as turmas que você está cadastrado.</p>
+    <hr class="my-4">
+    {% if suas_turmas %}
+    <p>Selecione uma turma para ver seus alunos.</p>
+    <div class="d-flex justify-content-start align-items-center flex-wrap">
+      {% for turma in suas_turmas %}
+      <a href="{% url 'turma' turma.id %}" class="btn btn-primary m-2">{{ turma.id }}</a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p>Você não está cadastrado em nenhuma turma.</p>
+    {% endif %}
+    <hr class="my-4">
+    <p class="lead">Cadastre-se em uma turma</p>
+    {% if turmas %}
+    <form action="{% url 'turmas' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group" style="max-width: 150px;">
+            <label for="turma">Turma</label>
+            <select class="form-control" id="turma" name="turma">
+                {% for turma in turmas %}
+                <option value="{{ turma.id }}">{{ turma.id }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+    </form>
+    {% else %}
+    <p>Não há turmas cadastradas.</p>
+    {% endif %}
+</div>
+{% endblock %}
