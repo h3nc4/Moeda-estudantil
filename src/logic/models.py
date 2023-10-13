@@ -35,7 +35,8 @@ class Empresa(models.Model):
 
 class Vantagem(models.Model):
     descricao = models.TextField()
-    valor = models.IntegerField()
+    imagem = models.TextField()
+    valor = models.PositiveIntegerField()
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
 
 class Turma(models.Model):
