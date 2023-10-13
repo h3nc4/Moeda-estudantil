@@ -9,3 +9,7 @@ Ao criar uma instância de modelo, com `Aluno.objects.create(...)` e `.save()`, 
 Da mesma forma, ao consultar dados usando o ORM, como `Aluno.objects.filter(...)`, o Django gera consultas SQL para buscar os dados do banco de dados e retorna objetos Python que correspondem a esses dados.
 
 A estratégia de acesso ao banco de dados é eficiente e segura, pois o Django lida com muitos detalhes de baixo nível, permitindo a nós salvar e recuperar dados sem escrever SQL diretamente e sem se preocupar com a segurança.
+
+**Na modelagem, relação terminada em bola significa que o lado é "n" da relação.**
+
+**Já a relação terminada em ponta significa que o lado é "1" da relação.**
