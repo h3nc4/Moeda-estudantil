@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+    {% if professor %}
+    <h2 class="display-4">Professor: {{ user.username }}</h2>
+    <p class="lead">Moedas: {{ professor.moedas }}</p>
+    {% else %}
+    <p class="lead">A turma não tem professor atualmente.</p>
+    {% endif %}
+    <hr class="my-4">
+    <h4 class="mb-4">Alunos:</h4>
+    {% for aluno in alunos %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ aluno.usuario.username }}</h5>
+            <p class="card-text">Moedas: {{ aluno.moedas }}</p>
+            {% if professor.moedas > 0 %}
+            <form method="post" action="{% url 'enviar_moeda' aluno.usuario.id %}">
+                {% csrf_token %}
+                <div class="form-row align-items-center">
+                    <div class="col-auto">
+                        <label for="quantidade_moedas" class="sr-only">Quantidade de Moedas</label>
+                        <input type="number" class="form-control" name="quantidade_moedas" id="quantidade_moedas" placeholder="Moedas" min="1" max="{{ professor.moedas }}" required>
+                    </div>
+                    <div class="col-auto">
+                        <label for="mensagem" class="sr-only">Mensagem</label>
+                        <input type="text" class="form-control" name="mensagem" id="mensagem" placeholder="Mensagem" maxlength="200">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
