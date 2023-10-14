@@ -215,6 +215,14 @@ def vantagem(request, id):
         return redirect('/')
     return HttpResponseNotAllowed(['POST'])
 
+def historico(request):
+    if not request.user.is_authenticated:
+        return err403(request)
+    return render(request, 'historico.html', {
+        'transacoes_enviadas': Transacao.objects.filter(de=request.user),
+        'transacoes_recebidas': Transacao.objects.filter(para=request.user)
+    })
+
 # Página de erro 403, 'forbidden'
 def err403(request):
     return render(request, '403.html', status=403)

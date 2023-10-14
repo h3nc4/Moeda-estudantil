@@ -41,6 +41,7 @@ urlpatterns = [
     path('enviar_moeda/<int:id>', views.enviar_moeda, name='enviar_moeda'),
     path('vantagem/<int:id>', views.vantagem, name='vantagem'),
     path('vantagens/', views.vantagens, name='vantagens'),
+    path('historico/', views.historico, name='historico'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
 ]
