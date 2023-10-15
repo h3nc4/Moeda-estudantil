@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="my-5">
+        Histórico de Transações para {{ user.username }}
+    </h2>
+
+
+    {% if not user.empresa %} <!-- Empresa não faz transações -->
+    <h3>Transações Enviadas</h3>
+    {% if transacoes_enviadas|length == 0 %}
+    <p>Não há transações enviadas.</p>
+    {% else %}
+    <ul class="list-group">
+        {% for transacao in transacoes_enviadas %}
+        <li class="list-group-item">
+            <strong class="mr-3">{{ transacao.moedas }} Moedas</strong>
+            <span class="text-danger"><strong>-</strong>
+                {% if transacao.para.empresa %}
+                Enviado para a empresa
+                {% else %}
+                "{{ transacao.mensagem }}" enviado para o aluno
+                {% endif %}
+                {{ transacao.para.username }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endif %}
+
+    {% if not user.professor %} <!-- Professor não tem transações recebidas -->
+    <h3 class="mt-4">Transações Recebidas</h3>
+    {% if transacoes_recebidas|length == 0 %}
+    <p>Não há transações recebidas.</p>
+    {% else %}
+    <ul class="list-group">
+        {% for transacao in transacoes_recebidas %}
+        <li class="list-group-item">
+            <strong class="mr-3">{{ transacao.moedas }} Moedas</strong>
+            <span class="text-success"><strong>+</strong>
+                {% if transacao.de.professor %}
+                "{{ transacao.mensagem }}" vindo do professor
+                {% else %}
+                Recebido do aluno 
+                {% endif %}
+                {{ transacao.de.username }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
