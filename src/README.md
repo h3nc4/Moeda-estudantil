@@ -4,8 +4,7 @@
 
 ```bash
 sudo apt install python3 python3-pip python3-venv -y
-git clone https://github.com/h3nc4/Moeda-estudantil.git
-mv Moeda-estudantil moeda-estudantil
+git clone https://github.com/h3nc4/Moeda-estudantil.git moeda-estudantil
 cd moeda-estudantil
 python3 -m venv .venv
 source .venv/bin/activate
