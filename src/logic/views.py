@@ -218,9 +218,17 @@ def vantagem(request, id):
 def historico(request):
     if not request.user.is_authenticated:
         return err403(request)
+    enviadas = Transacao.objects.filter(de=request.user)
+    recebidas = Transacao.objects.filter(para=request.user)
+    total = 0
+    for t in enviadas:
+        total -= t.moedas
+    for t in recebidas:
+        total += t.moedas
     return render(request, 'historico.html', {
-        'transacoes_enviadas': Transacao.objects.filter(de=request.user),
-        'transacoes_recebidas': Transacao.objects.filter(para=request.user)
+        'transacoes_enviadas': enviadas,
+        'transacoes_recebidas': recebidas,
+        'moedas': total
     })
 
 # Página de erro 403, 'forbidden'
