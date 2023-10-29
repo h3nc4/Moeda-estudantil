@@ -18,7 +18,8 @@
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-import string, random
+import string
+import random
 
 class Enum(models.Model):
     semestre = models.PositiveIntegerField(default=1)
@@ -30,12 +31,6 @@ class Endereco(models.Model):
     rua = models.CharField(max_length=50)
     numero = models.PositiveSmallIntegerField()
     complemento = models.CharField(max_length=10, blank=True, default=None)
-
-class Transacao(models.Model):
-    moedas = models.PositiveIntegerField()
-    mensagem = models.CharField(max_length=200, blank=True, default='Mensagem não especificada')
-    de = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='de_user')
-    para = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='para_user')
 
 class Usuario(AbstractUser):
     empresa = models.OneToOneField('Empresa', on_delete=models.CASCADE, blank=True, null=True)
@@ -72,3 +67,23 @@ class Vantagem(models.Model):
     imagem = models.TextField()
     valor = models.PositiveIntegerField()
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+
+class Transacao(models.Model):
+    moedas = models.PositiveIntegerField()
+    mensagem = models.CharField(max_length=200, blank=True, default='Mensagem não especificada')
+    de = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='de_user')
+    para = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='para_user')
+    vantagem_comprada = models.ForeignKey('Vantagem', on_delete=models.CASCADE, blank=True, null=True)
+    codigo = models.CharField(max_length=6, unique=True, blank=True, null=True, default=None)
+    def gerar_codigo(self):
+        if self.de.aluno and self.para.empresa:
+            novo_codigo = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(6))
+            if Transacao.objects.filter(codigo=novo_codigo).exists():
+                return self.gerar_codigo()
+            return novo_codigo
+        return None
+
+    def save(self, *args, **kwargs):
+        if not self.codigo:
+            self.codigo = self.gerar_codigo()
+        super().save(*args, **kwargs)

@@ -4,15 +4,15 @@
   <h1 class="display-5">Veja os benefícios disponíveis</h1>
   <p class="lead">Selecione um benefício para comprá-lo.</p>
   <div class="row justify-content-center">
-    {% for compada in compradas %}
+    {% for vantagem, codigo in compradas.items %}
     <div class="col-md-4 mb-4">
       <div class="card h-100">
-        <img src="data:image/jpeg;base64,{{ compada.imagem }}" alt="{{ compada.descricao }}" class="card-img-top" style="max-height: 200px; object-fit: cover;">
+        <img src="data:image/jpeg;base64,{{ vantagem.imagem }}" alt="{{ vantagem.descricao }}" class="card-img-top" style="max-height: 200px; object-fit: cover;">
         <div class="card-body">
-          <p class="card-text">{{ compada.descricao }}</p>
+          <p class="card-text">{{ vantagem.descricao }}</p>
         </div>
         <div class="card-footer">
-          <button class="btn btn-success btn-block">Benefício já comprado</button>
+          <button class="btn btn-success btn-block">Código: {{ codigo }}</button>
         </div>
       </div>
     </div>

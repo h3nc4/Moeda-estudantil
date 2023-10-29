@@ -194,9 +194,15 @@ def enviar_moeda(request, id):
 def vantagens(request):
     if not request.user.is_authenticated or not request.user.aluno:
         return err403(request)
+    vantagens_compradas = request.user.aluno.vantagens.all()
+    compradas = {}
+    for vantagem in vantagens_compradas:
+        transacao = Transacao.objects.filter(de=request.user, vantagem_comprada=vantagem).first()
+        if transacao:
+            compradas[vantagem] = transacao.codigo
     return render(request, 'vantagens.html', {
         'vantagens': Vantagem.objects.exclude(id__in=request.user.aluno.vantagens.values_list('id', flat=True)),
-        'compradas': request.user.aluno.vantagens.all()
+        'compradas': compradas
     })
 
 # Compra de uma vantagem
@@ -211,7 +217,7 @@ def vantagem(request, id):
         aluno.moedas -= vantagem.valor
         aluno.vantagens.add(vantagem)
         aluno.save()
-        Transacao.objects.create(moedas=vantagem.valor, de=aluno.usuario, para=vantagem.empresa.usuario)
+        Transacao.objects.create(moedas=vantagem.valor, de=aluno.usuario, para=vantagem.empresa.usuario, vantagem_comprada=vantagem)
         return redirect('/')
     return HttpResponseNotAllowed(['POST'])
 
