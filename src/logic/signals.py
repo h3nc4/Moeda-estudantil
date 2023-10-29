@@ -18,9 +18,9 @@
 
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
-from .models import Sistema
+from .models import Enum as e
 
 @receiver(post_migrate)
 def inicializa_semestre(sender, **kwargs):
-    if not Sistema.objects.exists():
-        Sistema.objects.create()
+    if not e.objects.exists():
+        e.objects.create()

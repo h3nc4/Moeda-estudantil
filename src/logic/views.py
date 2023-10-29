@@ -17,7 +17,7 @@
 # <https://www.gnu.org/licenses/>.
 
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, logout as _logout, login as _login
+from django.contrib.auth import authenticate, logout as unlog, login as log_user
 from django.contrib.auth.hashers import make_password
 from django.db.models import F
 from django.http import HttpResponseNotAllowed
@@ -26,21 +26,21 @@ from .models import *
 
 # Página inicial
 def index(request):
-    return render(request, 'index.html', {'turmas': Turma.objects.all().count(), 'semestre': Sistema.objects.first().semestre})
+    return render(request, 'index.html', {'turmas': Turma.objects.all().count(), 'semestre': Enum.objects.first().semestre})
 
 # Faz o login de um usuário e o redireciona para a página inicial
 def login(request):
     if request.method == 'POST':
         user = authenticate(request, username=request.POST.get('nome'), password=request.POST.get('senha'))
         if user:
-            _login(request, user)
+            log_user(request, user)
             return redirect('/')
         return render(request, 'login.html', {'erro': 'Usuário ou senha incorretos.'})
     return render(request, 'login.html')
 
 # Faz o logout de um usuário e o redireciona para a página inicial
 def logout(request):
-    _logout(request)
+    unlog(request)
     return redirect('/')
 
 # Página de cadastro de professor, apenas envia o template e o tipo de usuário para a função de cadastro
@@ -101,7 +101,7 @@ def cadastro(request, template_name='cadastro.html', user_type='aluno'):
             tipo_e_objeto['empresa'] = Empresa.objects.create()
         usuario = Usuario.objects.create(username=nome, password=make_password(senha_crua), email=email, **tipo_e_objeto)
         if user_type != 'professor':
-            _login(request, usuario)
+            log_user(request, usuario)
         return redirect('/')
     return render(request, template_name)
 
@@ -130,7 +130,7 @@ def avanca_semestre(request):
     if not request.user.is_authenticated or not request.user.is_superuser:
         return err403(request)
     Professor.objects.all().update(moedas=F('moedas') + 1000)
-    sys_config = Sistema.objects.first()
+    sys_config = Enum.objects.first()
     sys_config.semestre += 1
     sys_config.save()
     return redirect('/')

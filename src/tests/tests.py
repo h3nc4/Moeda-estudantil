@@ -24,5 +24,5 @@ class SignalTestCase(TestCase):
     def test_signal_inicializa_semestre(self):
         # Verifica se o sinal inicializa_semestre foi conectado
         call_command('migrate')
-        Sistema = apps.get_model('logic', 'Sistema')
-        self.assertTrue(Sistema.objects.exists())
+        e = apps.get_model('logic', 'Enum')
+        self.assertTrue(e.objects.exists())

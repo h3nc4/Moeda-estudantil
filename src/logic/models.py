@@ -18,8 +18,9 @@
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+import string, random
 
-class Sistema(models.Model):
+class Enum(models.Model):
     semestre = models.PositiveIntegerField(default=1)
 
 class Endereco(models.Model):
@@ -27,8 +28,41 @@ class Endereco(models.Model):
     cidade = models.CharField(max_length=50)
     bairro = models.CharField(max_length=50)
     rua = models.CharField(max_length=50)
-    numero = models.IntegerField()
+    numero = models.PositiveSmallIntegerField()
     complemento = models.CharField(max_length=10, blank=True, default=None)
+
+class Transacao(models.Model):
+    moedas = models.PositiveIntegerField()
+    mensagem = models.CharField(max_length=200, blank=True, default='Mensagem não especificada')
+    de = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='de_user')
+    para = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='para_user')
+
+class Usuario(AbstractUser):
+    empresa = models.OneToOneField('Empresa', on_delete=models.CASCADE, blank=True, null=True)
+    aluno = models.OneToOneField('Aluno', on_delete=models.CASCADE, blank=True, null=True)
+    professor = models.OneToOneField('Professor', on_delete=models.CASCADE, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+
+    # Os campos abaixo são herdados de AbstractUser mas desnecessários para o Usuário padrão 
+    first_name = None; last_name = None
+
+class Membro(models.Model):
+    cpf = models.CharField(max_length=11, unique=True)
+    turmas = models.ManyToManyField('Turma')
+    moedas = models.PositiveIntegerField(default=0, blank=True)
+    class Meta:
+        abstract = True
+
+class Aluno(Membro):
+    rg = models.CharField(max_length=10)
+    endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+    vantagens = models.ManyToManyField('Vantagem')
+
+class Professor(Membro):
+    pass
+
+class Turma(models.Model):
+    pass
 
 class Empresa(models.Model):
     pass
@@ -38,36 +72,3 @@ class Vantagem(models.Model):
     imagem = models.TextField()
     valor = models.PositiveIntegerField()
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-
-class Turma(models.Model):
-    pass
-
-class Usuario(AbstractUser):
-    empresa = models.OneToOneField(Empresa, on_delete=models.CASCADE, blank=True, null=True)
-    aluno = models.OneToOneField('Aluno', on_delete=models.CASCADE, blank=True, null=True)
-    professor = models.OneToOneField('Professor', on_delete=models.CASCADE, blank=True, null=True)
-    email = models.EmailField(blank=True, null=True)
-
-    # Os campos abaixo são herdados de AbstractUser mas desnecessários para o Usuário padrão 
-    first_name = None; last_name = None
-
-class Transacao(models.Model):
-    moedas = models.PositiveIntegerField()
-    mensagem = models.CharField(max_length=200, blank=True, default='Mensagem não especificada')
-    de = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='de_user')
-    para = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='para_user')
-
-class Membro(models.Model):
-    cpf = models.CharField(max_length=11, unique=True)
-    turmas = models.ManyToManyField(Turma)
-    moedas = models.PositiveIntegerField(default=0, blank=True)
-    class Meta:
-        abstract = True
-
-class Aluno(Membro):
-    rg = models.CharField(max_length=10)
-    endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
-    vantagens = models.ManyToManyField(Vantagem)
-
-class Professor(Membro):
-    pass
