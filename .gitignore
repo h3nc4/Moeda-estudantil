@@ -1,5 +1,5 @@
 .venv
 static
 *.sqlite3
-__*
-*_*.py
+__pycache__
+00*.py

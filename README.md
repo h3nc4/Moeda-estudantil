@@ -10,10 +10,11 @@
 
 ```bash
 ├── docs/ - Documentação do projeto e descrição do sistema
-│   ├── classes/ - Diagrama de classes
 │   ├── casos_de_uso/ - Diagrama de casos de uso e histórias de usuário
+│   ├── classes/ - Diagrama de classes
 │   ├── db/ - Modelo ER e Definição da estratégia de acesso ao banco de dados
-├── scripts/ - Scripts de desenvolvimento
+│   ├── pdf/ - Apresentações e relatórios
+├── scripts/ - Scripts de desenvolvimento e implantação
 ├── src/ - Código fonte e instruções para instalação e execução do projeto
 │   ├── app/ - Configuração do Django
 │   ├── logic/ - Lógica da aplicação
@@ -24,7 +25,7 @@
 
 ## Descrição do sistema
 
-O Moeda Estudantil é um sistema de gerenciamento de moedas virtuais para escolas. O sistema permite que os professores recebam 1000 moedas a cada semestre e as distribuam para os alunos de acordo com o desempenho deles. Os alunos podem trocar as moedas por recompensas publicadas por empresas parceiras.
+O Moeda Estudantil é um sistema de gerenciamento de moedas virtuais para escolas. O sistema permite que os professores recebam moedas a cada semestre e as distribuam para os alunos de acordo com seu desempenho. Os alunos podem trocar as moedas por recompensas publicadas por empresas parceiras e trocar cupons por produtos e serviços.
 
 ## Licença
 

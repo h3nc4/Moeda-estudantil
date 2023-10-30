@@ -9,8 +9,6 @@ cd moeda-estudantil
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r src/requirements.txt
-mkdir src/logic/migrations
-touch src/logic/migrations/__init__.py
 python src/manage.py makemigrations
 python src/manage.py migrate
 ```
