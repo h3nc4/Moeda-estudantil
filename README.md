@@ -13,6 +13,7 @@
 │   ├── casos_de_uso/ - Diagrama de casos de uso e histórias de usuário
 │   ├── classes/ - Diagrama de classes
 │   ├── db/ - Modelo ER e Definição da estratégia de acesso ao banco de dados
+│   ├── diagrama_de_sequencia/ - Diagrama de Sequência
 │   ├── pdf/ - Apresentações e relatórios
 ├── scripts/ - Scripts de desenvolvimento e implantação
 ├── src/ - Código fonte e instruções para instalação e execução do projeto
