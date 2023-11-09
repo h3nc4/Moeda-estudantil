@@ -21,13 +21,13 @@ from django.contrib.auth import authenticate, logout as logoff, login as logon
 
 # Faz o login de um usuário e o redireciona para a página inicial
 def login(request):
-    if request.method == 'POST':
-        user = authenticate(request, username=request.POST.get('nome'), password=request.POST.get('senha'))
-        if user:
-            logon(request, user)
-            return redirect('/')
+    if request.method != 'POST':
+        return render(request, 'login.html')
+    user = authenticate(request, username=request.POST.get('nome'), password=request.POST.get('senha'))
+    if not user:
         return render(request, 'login.html', {'erro': 'Usuário ou senha incorretos.'})
-    return render(request, 'login.html')
+    logon(request, user)
+    return redirect('/')
 
 # Faz o logout de um usuário e o redireciona para a página inicial
 def logout(request):

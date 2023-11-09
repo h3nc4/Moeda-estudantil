@@ -18,8 +18,8 @@
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotAllowed
-from .error_views import err403
 from ..models import Usuario, Turma, Vantagem, Transacao
+from ..permissions import somente_professor, somente_aluno
 
 # Inscreve um usuário em uma turma, aceita apenas POST
 def enturmar(request):
@@ -35,13 +35,12 @@ def enturmar(request):
     return redirect('/turmas/')
 
 # Envio de moedas, aceita apenas POST
+@somente_professor
 def enviar_moeda(request, id):
-    if not request.user.professor:
-        return err403(request)
-    aluno_usr = Usuario.objects.get(id=id).aluno.usuario
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
 
+    aluno_usr = Usuario.objects.get(id=id).aluno.usuario
     moedas = request.POST.get('quantidade_moedas')
     mensagem = request.POST.get('mensagem')
     if not moedas:
@@ -62,9 +61,8 @@ def enviar_moeda(request, id):
     return redirect('/')
 
 # Compra de uma vantagem, aceita apenas POST
+@somente_aluno
 def comprar(request, id):
-    if not request.user.aluno:
-        return err403(request)
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
 

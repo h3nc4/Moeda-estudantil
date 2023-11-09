@@ -22,16 +22,15 @@ from django.contrib.auth.hashers import make_password
 from django.db.models import F
 import base64
 from ..models import Usuario, Aluno, Professor, Empresa, Turma, Endereco, Vantagem, Transacao, Enum
-from .error_views import err403
+from ..permissions import *
 
 # Página inicial
 def index(request):
     return render(request, 'index.html', {'turmas': Turma.objects.all().count(), 'semestre': Enum.objects.first().semestre})
 
 # Página de cadastro de professor, apenas envia o template e o tipo de usuário para a função de cadastro
+@somente_super
 def cadastro_professor(request):
-    if not request.user.is_superuser:
-        return err403(request)
     return cadastro(request, template_name='cadastro_professor.html', user_type='professor')
 
 # Página de cadastro de empresa, apenas envia o template e o tipo de usuário para a função de cadastro
@@ -91,15 +90,13 @@ def cadastro(request, template_name='cadastro.html', user_type='aluno'):
     return render(request, template_name)
 
 # Página principal para empresas
+@somente_empresa
 def empresa(request):
-    if not request.user.empresa:
-        return err403(request)
     return render(request, 'empresa.html', {'vantagens': request.user.empresa.vantagem_set.all()})
 
 # Página para adicionar uma nova vantagem
+@somente_empresa
 def nova_vantagem(request):
-    if not request.user.empresa:
-        return err403(request)
     if request.method == 'POST':
         descricao = request.POST.get('descricao')
         valor = request.POST.get('valor')
@@ -111,9 +108,8 @@ def nova_vantagem(request):
     return render(request, 'nova_vantagem.html')
 
 # Avança o semestre, adicionando moedas para os professores
+@somente_super
 def avanca_semestre(request):
-    if not request.user.is_superuser:
-        return err403(request)
     Usuario.objects.filter(professor__isnull=False).update(moedas=F('moedas') + 1000)
     sys_config = Enum.objects.first()
     sys_config.semestre += 1
@@ -121,29 +117,25 @@ def avanca_semestre(request):
     return redirect('/')
 
 # Página de turmas
+@ou_professor_ou_aluno
 def turmas(request):
-    if (not request.user.professor and not request.user.aluno):
-        return err403(request)
     return render(request, 'turmas.html', {'suas_turmas': request.user.aluno.turmas.all() if request.user.aluno else request.user.professor.turmas.all(), 'turmas': Turma.objects.all()})
 
 # Página de uma turma
+@somente_professor
 def turma(request, id):
-    if not request.user.professor:
-        return err403(request)
     turma = Turma.objects.get(id=id)
     return render(request, 'turma.html', {'professor': turma.professor_set.first(), 'alunos': turma.aluno_set.all(), 'turma': turma})
 
 # Cadastro de turmas, cria e insere uma turma no banco de dados
+@somente_super
 def cadastrar_turma(request):
-    if not request.user.is_superuser:
-        return err403(request)
     Turma.objects.create()
     return redirect('/')
 
 # Página de vantagens
+@somente_aluno
 def vantagens(request):
-    if not request.user.aluno:
-        return err403(request)
     vantagens_compradas = request.user.aluno.vantagens.all()
     compradas = {}
     for vantagem in vantagens_compradas:
@@ -157,9 +149,8 @@ def vantagens(request):
     })
 
 # Página de extrato de transações
+@somente_aluno
 def historico(request):
-    if not request.user.is_authenticated:
-        return err403(request)
     return render(request, 'historico.html', {
         'transacoes_enviadas': Transacao.objects.filter(de=request.user),
         'transacoes_recebidas': Transacao.objects.filter(para=request.user)
