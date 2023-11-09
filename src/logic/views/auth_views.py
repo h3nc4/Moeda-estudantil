@@ -16,10 +16,20 @@
 # General Public License along with Moeda estudantil. If not, see
 # <https://www.gnu.org/licenses/>.
 
-from django.apps import AppConfig
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, logout as logoff, login as logon
 
-class LogicConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'logic'
-    def ready(self):
-        from . import signals
+# Faz o login de um usuário e o redireciona para a página inicial
+def login(request):
+    if request.method == 'POST':
+        user = authenticate(request, username=request.POST.get('nome'), password=request.POST.get('senha'))
+        if user:
+            logon(request, user)
+            return redirect('/')
+        return render(request, 'login.html', {'erro': 'Usuário ou senha incorretos.'})
+    return render(request, 'login.html')
+
+# Faz o logout de um usuário e o redireciona para a página inicial
+def logout(request):
+    logoff(request)
+    return redirect('/')

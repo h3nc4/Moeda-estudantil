@@ -17,7 +17,7 @@
 # <https://www.gnu.org/licenses/>.
 
 from django.urls import path, include
-from . import views
+from .views import views, auth_views, post_views
 
 url_empresa = [
     path('', views.empresa, name='empresa'),
@@ -37,11 +37,12 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('cadastro/', views.cadastro, name='cadastro'),
     path('turmas/', views.turmas, name='turmas'),
+    path('enturmar/', post_views.enturmar, name='enturmar'),
     path('turma/<int:id>', views.turma, name='turma'),
-    path('enviar_moeda/<int:id>', views.enviar_moeda, name='enviar_moeda'),
-    path('comprar/<int:id>', views.comprar, name='comprar'),
+    path('enviar_moeda/<int:id>', post_views.enviar_moeda, name='enviar_moeda'),
+    path('comprar/<int:id>', post_views.comprar, name='comprar'),
     path('vantagens/', views.vantagens, name='vantagens'),
     path('historico/', views.historico, name='historico'),
-    path('login/', views.login, name='login'),
-    path('logout/', views.logout, name='logout'),
+    path('login/', auth_views.login, name='login'),
+    path('logout/', auth_views.logout, name='logout'),
 ]

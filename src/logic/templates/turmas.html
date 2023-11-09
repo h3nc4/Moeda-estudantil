@@ -24,7 +24,7 @@
     <hr class="my-4">
     <p class="lead">Cadastre-se em uma turma</p>
     {% if turmas %}
-    <form action="{% url 'turmas' %}" method="post">
+    <form action="{% url 'enturmar' %}" method="post">
         {% csrf_token %}
         <div class="form-group" style="max-width: 150px;">
             <label for="turma">Turma</label>

@@ -16,10 +16,8 @@
 # General Public License along with Moeda estudantil. If not, see
 # <https://www.gnu.org/licenses/>.
 
-from django.apps import AppConfig
+from django.shortcuts import render
 
-class LogicConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'logic'
-    def ready(self):
-        from . import signals
+# Página de erro 403, 'forbidden'
+def err403(request):
+    return render(request, '403.html', status=403)
