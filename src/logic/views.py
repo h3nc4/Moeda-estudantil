@@ -206,7 +206,7 @@ def vantagens(request):
     })
 
 # Compra de uma vantagem
-def vantagem(request, id):
+def comprar(request, id):
     if not request.user.is_authenticated or not request.user.aluno:
         return err403(request)
     vantagem = Vantagem.objects.get(id=id)

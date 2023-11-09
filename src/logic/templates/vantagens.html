@@ -19,7 +19,7 @@
     {% endfor %}
     {% for vantagem in vantagens %}
     <div class="col-md-4 mb-4">
-      <form action="{% url 'vantagem' vantagem.id %}" method="post">
+      <form action="{% url 'comprar' vantagem.id %}" method="post">
         {% csrf_token %}
         <div class="card h-100">
           <img src="data:image/jpeg;base64,{{ vantagem.imagem }}" alt="{{ vantagem.descricao }}" class="card-img-top" style="max-height: 200px; object-fit: cover;">
@@ -28,7 +28,7 @@
             <p class="card-text">{{ vantagem.descricao }}</p>
           </div>
           <div class="card-footer">
-            {% if user.aluno.moedas < vantagem.valor %}
+            {% if user.moedas < vantagem.valor %}
               <button class="btn btn-primary" disabled>Sem moedas suficientes</button>
             {% else %}
               <button type="submit" class="btn btn-primary btn-block">Comprar</button>
@@ -39,6 +39,6 @@
     </div>
     {% endfor %}
   </div>
-  <p>Seu saldo atual é de {{ user.aluno.moedas }} moedas.</p>
+  <p>Seu saldo atual é de {{ user.moedas }} moedas.</p>
 </div>
 {% endblock %}
