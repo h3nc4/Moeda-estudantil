@@ -149,7 +149,7 @@ def vantagens(request):
     })
 
 # Página de extrato de transações
-@somente_aluno
+@somente_autenticado
 def historico(request):
     return render(request, 'historico.html', {
         'transacoes_enviadas': Transacao.objects.filter(de=request.user),

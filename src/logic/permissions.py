@@ -58,6 +58,13 @@ def ou_professor_ou_aluno(view_func):
         return view_func(request, *args, **kwargs)
     return wrapper
 
+def somente_autenticado(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return err403(request)
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
 def somente_post(view_func):
     def wrapper(request, *args, **kwargs):
         if request.method != 'POST':
