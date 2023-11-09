@@ -37,6 +37,7 @@ class Usuario(AbstractUser):
     aluno = models.OneToOneField('Aluno', on_delete=models.CASCADE, blank=True, null=True)
     professor = models.OneToOneField('Professor', on_delete=models.CASCADE, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
+    moedas = models.PositiveIntegerField(default=0, blank=True)
 
     # Os campos abaixo são herdados de AbstractUser mas desnecessários para o Usuário padrão 
     first_name = None; last_name = None
@@ -44,7 +45,6 @@ class Usuario(AbstractUser):
 class Membro(models.Model):
     cpf = models.CharField(max_length=11, unique=True)
     turmas = models.ManyToManyField('Turma')
-    moedas = models.PositiveIntegerField(default=0, blank=True)
     class Meta:
         abstract = True
 

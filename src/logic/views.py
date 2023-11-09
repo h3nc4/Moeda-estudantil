@@ -129,17 +129,17 @@ def nova_vantagem(request):
 def avanca_semestre(request):
     if not request.user.is_authenticated or not request.user.is_superuser:
         return err403(request)
-    Professor.objects.all().update(moedas=F('moedas') + 1000)
+    Usuario.objects.filter(professor__isnull=False).update(moedas=F('moedas') + 1000)
     sys_config = Enum.objects.first()
     sys_config.semestre += 1
     sys_config.save()
     return redirect('/')
 
-# Página de turmas
+# Página de turmas e inscrição em turmas
 def turmas(request):
     if not request.user.is_authenticated or (not request.user.professor and not request.user.aluno):
         return err403(request)
-    if request.method == 'POST':
+    if request.method == 'POST': # Inscrição em uma turma
         turma = request.POST.get('turma')
         if not turma:
             return render(request, 'turmas.html', {'erro': 'Selecione uma turma.'})
@@ -148,6 +148,7 @@ def turmas(request):
         elif request.user.professor:
             request.user.professor.turmas.add(Turma.objects.get(id=turma))
         return redirect('/')
+    # Página de turmas
     return render(request, 'turmas.html', {'suas_turmas': request.user.aluno.turmas.all() if request.user.aluno else request.user.professor.turmas.all(), 'turmas': Turma.objects.all()})
 
 # Página de uma turma
@@ -164,11 +165,11 @@ def cadastrar_turma(request):
     Turma.objects.create()
     return redirect('/')
 
+# Envio de moedas, aceita apenas POST
 def enviar_moeda(request, id):
     if not request.user.is_authenticated or not request.user.professor:
         return err403(request)
-    aluno = Usuario.objects.get(id=id).aluno
-    professor = request.user.professor
+    aluno_usr = Usuario.objects.get(id=id).aluno.usuario
     if request.method == 'POST':
         moedas = request.POST.get('quantidade_moedas')
         mensagem = request.POST.get('mensagem')
@@ -180,13 +181,13 @@ def enviar_moeda(request, id):
             return render(request, 'error.html', {'erro': 'São aceitos apenas números inteiros.'})
         if moedas < 0:
             return render(request, 'error.html', {'erro': 'Não é possível enviar moedas negativas.'})
-        if moedas > request.user.professor.moedas:
+        if moedas > request.user.moedas:
             return render(request, 'error.html', {'erro': 'Você não tem moedas suficientes.'})
-        professor.moedas -= moedas
-        professor.save()
-        aluno.moedas += moedas
-        aluno.save()
-        Transacao.objects.create(moedas=moedas, mensagem=mensagem, de=request.user, para=aluno.usuario)
+        request.user.moedas -= moedas
+        request.user.save() # Professor
+        aluno_usr.moedas += moedas
+        aluno_usr.save()
+        Transacao.objects.create(moedas=moedas, mensagem=mensagem, de=request.user, para=aluno_usr)
         return redirect('/')
     return HttpResponseNotAllowed(['POST'])
 
@@ -201,40 +202,35 @@ def vantagens(request):
         if transacao:
             compradas[vantagem] = transacao.codigo
     return render(request, 'vantagens.html', {
+        # Filtra as vantagens que o aluno não possui
         'vantagens': Vantagem.objects.exclude(id__in=request.user.aluno.vantagens.values_list('id', flat=True)),
         'compradas': compradas
     })
 
-# Compra de uma vantagem
+# Compra de uma vantagem, aceita apenas POST
 def comprar(request, id):
     if not request.user.is_authenticated or not request.user.aluno:
         return err403(request)
     vantagem = Vantagem.objects.get(id=id)
-    aluno = request.user.aluno
+    aluno_usr = request.user
     if request.method == 'POST':
-        if aluno.moedas < vantagem.valor:
+        if aluno_usr.moedas < vantagem.valor:
             return render(request, 'error.html', {'erro': 'Você não tem moedas suficientes.'})
-        aluno.moedas -= vantagem.valor
-        aluno.vantagens.add(vantagem)
-        aluno.save()
-        Transacao.objects.create(moedas=vantagem.valor, de=aluno.usuario, para=vantagem.empresa.usuario, vantagem_comprada=vantagem)
+        aluno_usr.moedas -= vantagem.valor
+        aluno_usr.save()
+        aluno_usr.aluno.vantagens.add(vantagem)
+        aluno_usr.aluno.save()
+        Transacao.objects.create(moedas=vantagem.valor, de=aluno_usr, para=vantagem.empresa.usuario, vantagem_comprada=vantagem)
         return redirect('/')
     return HttpResponseNotAllowed(['POST'])
 
+# Página de extrato de transações
 def historico(request):
     if not request.user.is_authenticated:
         return err403(request)
-    enviadas = Transacao.objects.filter(de=request.user)
-    recebidas = Transacao.objects.filter(para=request.user)
-    total = 0
-    for t in enviadas:
-        total -= t.moedas
-    for t in recebidas:
-        total += t.moedas
     return render(request, 'historico.html', {
-        'transacoes_enviadas': enviadas,
-        'transacoes_recebidas': recebidas,
-        'moedas': total
+        'transacoes_enviadas': Transacao.objects.filter(de=request.user),
+        'transacoes_recebidas': Transacao.objects.filter(para=request.user)
     })
 
 # Página de erro 403, 'forbidden'

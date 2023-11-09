@@ -22,13 +22,13 @@
 
     <!-- Área de professor -->
     {% elif user.professor %}
-    <p>Você tem atualmente {{ user.professor.moedas }} moedas.</p>
+    <p>Você tem atualmente {{ user.moedas }} moedas.</p>
     <a class="btn btn-primary btn-lg" href="{% url 'turmas' %}" role="button">Turmas</a>
     <a class="btn btn-primary btn-lg" href="{% url 'historico' %}" role="button">Transações Enviadas</a>
 
     <!-- Área de aluno -->
     {% elif user.aluno %}
-    <p>Você tem atualmente {{ user.aluno.moedas }} moedas.</p>
+    <p>Você tem atualmente {{ user.moedas }} moedas.</p>
     <a class="btn btn-primary btn-lg" href="{% url 'turmas' %}" role="button">Turmas</a>
     <a class="btn btn-primary btn-lg" href="{% url 'vantagens' %}" role="button">Ver Benefícios</a>
     <a class="btn btn-primary btn-lg" href="{% url 'historico' %}" role="button">Transações Realizadas</a>

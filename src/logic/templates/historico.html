@@ -6,7 +6,7 @@
     </h2>
 
     <!-- Total de moedas atual -->
-    <p class="mb-5">Você possui <strong>{{ moedas }}</strong> moedas.</p>
+    <p class="mb-5">Você possui <strong>{{ user.moedas }}</strong> moedas.</p>
 
     {% if not user.empresa %} <!-- Empresa não faz transações -->
     <h3>Transações Enviadas</h3>
