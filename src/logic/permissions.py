@@ -17,6 +17,7 @@
 # <https://www.gnu.org/licenses/>.
 
 from django.shortcuts import render
+from django.http import HttpResponseNotAllowed
 
 # Página de erro 403, 'forbidden'
 def err403(request):
@@ -54,5 +55,12 @@ def ou_professor_ou_aluno(view_func):
     def wrapper(request, *args, **kwargs):
         if not (request.user.aluno or request.user.professor):
             return err403(request)
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+def somente_post(view_func):
+    def wrapper(request, *args, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(['POST'])
         return view_func(request, *args, **kwargs)
     return wrapper

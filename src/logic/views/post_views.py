@@ -16,30 +16,26 @@
 # General Public License along with Moeda estudantil. If not, see
 # <https://www.gnu.org/licenses/>.
 
-from django.shortcuts import render, redirect
-from django.http import HttpResponseNotAllowed
+from django.shortcuts import render, redirect, get_object_or_404
 from ..models import Usuario, Turma, Vantagem, Transacao
-from ..permissions import somente_professor, somente_aluno
+from ..permissions import somente_professor, somente_aluno, somente_post, ou_professor_ou_aluno
 
 # Inscreve um usuário em uma turma, aceita apenas POST
+@somente_post
+@ou_professor_ou_aluno
 def enturmar(request):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(['POST'])
-    turma = request.POST.get('turma')
-    if not turma:
+    turma_id = request.POST.get('turma')
+    if not turma_id:
         return render(request, 'turmas.html', {'erro': 'Selecione uma turma.'})
-    if request.user.aluno:
-        request.user.aluno.turmas.add(Turma.objects.get(id=turma))
-    elif request.user.professor:
-        request.user.professor.turmas.add(Turma.objects.get(id=turma))
+    aluno_prof = getattr(request.user, 'aluno', None) or getattr(request.user, 'professor', None)
+    if aluno_prof:
+        aluno_prof.turmas.add(get_object_or_404(Turma, id=turma_id))
     return redirect('/turmas/')
 
 # Envio de moedas, aceita apenas POST
+@somente_post
 @somente_professor
 def enviar_moeda(request, id):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(['POST'])
-
     aluno_usr = Usuario.objects.get(id=id).aluno.usuario
     moedas = request.POST.get('quantidade_moedas')
     mensagem = request.POST.get('mensagem')
@@ -58,14 +54,12 @@ def enviar_moeda(request, id):
     aluno_usr.moedas += moedas
     aluno_usr.save()
     Transacao.objects.create(moedas=moedas, mensagem=mensagem, de=request.user, para=aluno_usr)
-    return redirect('/')
+    return redirect('/historico/')
 
 # Compra de uma vantagem, aceita apenas POST
+@somente_post
 @somente_aluno
 def comprar(request, id):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(['POST'])
-
     vantagem = Vantagem.objects.get(id=id)
     aluno_usr = request.user
     if aluno_usr.moedas < vantagem.valor:
