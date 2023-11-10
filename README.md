@@ -1,11 +1,5 @@
 # Moeda Estudantil
 
-## Integrantes
-
-* Gabriel Dolabela Marques
-* Henrique Carvalho Almeida
-* João Pedro de Oliveira Pauletti
-
 ## Estrutura
 
 ```bash
@@ -13,7 +7,7 @@
 │   ├── casos_de_uso/ - Diagrama de casos de uso e histórias de usuário
 │   ├── classes/ - Diagrama de classes
 │   ├── db/ - Modelo ER e Definição da estratégia de acesso ao banco de dados
-│   ├── diagrama_de_sequencia/ - Diagrama de Sequência
+│   ├── flow/ - Diagrama de Sequência
 │   ├── pdf/ - Apresentações e relatórios
 ├── scripts/ - Scripts de desenvolvimento e implantação
 ├── src/ - Código fonte e instruções para instalação e execução do projeto
@@ -21,7 +15,7 @@
 │   ├── logic/ - Lógica da aplicação
 │   │  ├── migrations/ - Migrações do banco de dados
 │   │  ├── templates/ - Telas de interface
-│   ├── test/ - Testes unitários
+│   │  ├── views/ - Controladores
 ```
 
 ## Descrição do sistema
