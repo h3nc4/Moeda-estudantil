@@ -21,12 +21,12 @@ from .views import views, auth_views, post_views
 
 url_empresa = [
     path('', views.empresa, name='empresa'),
-    path('cadastro/', views.cadastro_empresa, name='cadastro_empresa'),
+    path('cadastro/', auth_views.cadastro_empresa, name='cadastro_empresa'),
     path('nova_vantagem/', views.nova_vantagem, name='nova_vantagem'),
 ]
 
 url_admin = [
-    path('cadastro_professor/', views.cadastro_professor, name='cadastro_professor'),
+    path('cadastro_professor/', auth_views.cadastro_professor, name='cadastro_professor'),
     path('avanca_semestre/', views.avanca_semestre, name='avanca_semestre'),
     path('cadastrar_turma/', views.cadastrar_turma, name='cadastrar_turma'),
 ]
@@ -35,7 +35,7 @@ urlpatterns = [
     path('admin/', include(url_admin)),
     path('empresa/', include(url_empresa)),
     path('', views.index, name='index'),
-    path('cadastro/', views.cadastro, name='cadastro'),
+    path('cadastro/', auth_views.cadastro, name='cadastro'),
     path('turmas/', views.turmas, name='turmas'),
     path('enturmar/', post_views.enturmar, name='enturmar'),
     path('turma/<int:id>', views.turma, name='turma'),
