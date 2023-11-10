@@ -3,7 +3,7 @@
 <div class="jumbotron">
     {% if professor %}
     <h2 class="display-4">Professor: {{ user.username }}</h2>
-    <p class="lead">Moedas: {{ professor.moedas }}</p>
+    <p class="lead">Moedas: {{ user.moedas }}</p>
     {% else %}
     <p class="lead">A turma não tem professor atualmente.</p>
     {% endif %}
@@ -13,7 +13,7 @@
     <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title">{{ aluno.usuario.username }}</h5>
-            <p class="card-text">Moedas: {{ user.moedas }}</p>
+            <p class="card-text">Moedas: {{ aluno.usuario.moedas }}</p>
             {% if user.moedas > 0 %}
             <form method="post" action="{% url 'enviar_moeda' aluno.usuario.id %}">
                 {% csrf_token %}
