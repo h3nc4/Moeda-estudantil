@@ -17,10 +17,11 @@
 # <https://www.gnu.org/licenses/>.
 
 from pathlib import Path
+from .secrets import KEY, DATABASE_PASSWORD
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-&h0gtpk11+!_8@v*t^$%1$$z#fu#isr*ty^9v0qe8wngnll@u5'
+SECRET_KEY = KEY
 
 DEBUG = True
 
@@ -69,8 +70,12 @@ TEMPLATES = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'moeda',
+        'USER': 'developer',
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
