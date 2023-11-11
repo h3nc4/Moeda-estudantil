@@ -17,8 +17,7 @@
 # <https://www.gnu.org/licenses/>.
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
+from ..utils import mail
 from ..models import Usuario, Turma, Vantagem, Transacao
 from ..permissions import somente_professor, somente_aluno, somente_post, ou_professor_ou_aluno
 
@@ -51,13 +50,13 @@ def enviar_moeda(request, id):
         return render(request, 'error.html', {'erro': 'Não é possível enviar moedas negativas.'})
     if moedas > request.user.moedas:
         return render(request, 'error.html', {'erro': 'Você não tem moedas suficientes.'})
-    EmailMessage("O professor " + request.user.username + " enviou moedas para você",
-        render_to_string("email/profmoedas.html", {
+    mail("O professor " + request.user.username + " enviou moedas para você",
+        "email/profmoedas.html", {
             'user': aluno_usr.username,
             'professor': request.user.username,
             'moedas': moedas,
             'mensagem': mensagem,
-        }), to=[aluno_usr.email]).send()
+        }, aluno_usr.email)
     request.user.moedas -= moedas
     request.user.save() # Professor
     aluno_usr.moedas += moedas
@@ -79,11 +78,11 @@ def comprar(request, id):
     aluno_usr.aluno.vantagens.add(vantagem)
     aluno_usr.aluno.save()
     transacao = Transacao.objects.create(moedas=vantagem.valor, de=aluno_usr, para=vantagem.empresa.usuario, vantagem_comprada=vantagem)
-    EmailMessage("O aluno " + aluno_usr.username + " comprou uma vantagem",
-        render_to_string("email/nota_fiscal.html", {
+    mail("O aluno " + aluno_usr.username + " comprou uma vantagem",
+        "email/nota_fiscal.html", {
             'aluno': aluno_usr.username,
             'empresa': empresa_usr.username,
             'vantagem': vantagem.descricao,
             'cupom': transacao.codigo,
-        }), to=[empresa_usr.email]).send()
+        }, empresa_usr.email)
     return redirect('/vantagens/')

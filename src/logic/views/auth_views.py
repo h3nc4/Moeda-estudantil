@@ -19,14 +19,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout as logoff, login as logon
 from django.contrib.auth.hashers import make_password
-from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from django.core.mail import EmailMessage
+from ..utils import mail, account_activation_token
 from ..models import Usuario, Aluno, Professor, Empresa, Endereco
 from ..permissions import somente_super
-from ..tokens import account_activation_token
 
 # Ativação de conta após o usuário clicar no link enviado por email
 def efetuar_ativacao(request, uidb64, token):
@@ -43,18 +41,14 @@ def efetuar_ativacao(request, uidb64, token):
 
 # Envia um email de ativação para um usuário e o redireciona para a página de ativação
 def ativar_conta(request, user, email):
-    email = EmailMessage("Ative sua conta",
-        render_to_string("email/ativacao.html", {
-            'user': user.username,
-            "protocolo": 'https' if request.is_secure() else 'http',
-            'dominio': get_current_site(request).domain,
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-            'token': account_activation_token.make_token(user),
-        }), to=[email])
-    if email.send():
-        return render(request, 'conta/ativar_conta.html')
-    else:
-        return render(request, 'conta/ativar_conta.html', {'erro': 'Erro ao enviar email.'})
+    mail("Ative sua conta", "email/ativacao.html", {
+        'user': user.username,
+        "protocolo": 'https' if request.is_secure() else 'http',
+        'dominio': get_current_site(request).domain,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': account_activation_token.make_token(user),
+    }, email)
+    return render(request, 'conta/ativar_conta.html')
 
 # Redefine a senha de um usuário e o redireciona para a página inicial
 def redefinir_senha(request, uidb64, token):
@@ -89,18 +83,14 @@ def recuperar_senha(request):
         user = None
     if user is None:
         return render(request, 'conta/recuperar_senha.html', {'erro': 'Usuário não encontrado.'})
-    email = EmailMessage("Redefinição de senha",
-        render_to_string("email/redefinir_senha.html", {
+    mail("Redefinição de senha", "email/redefinir_senha.html", {
             'user': user.username,
             "protocolo": 'https' if request.is_secure() else 'http',
             'dominio': get_current_site(request).domain,
             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
             'token': account_activation_token.make_token(user),
-        }), to=[email])
-    if email.send():
-        return render(request, 'conta/recuperar_senha.html', {'sucesso': True})
-    else:
-        return render(request, 'conta/recuperar_senha.html', {'erro': 'Erro ao enviar email.'})
+        }, email)
+    return render(request, 'conta/recuperar_senha.html', {'sucesso': True})
 
 # Faz o login de um usuário e o redireciona para a página inicial
 def login(request):

@@ -16,11 +16,28 @@
 # General Public License along with Moeda estudantil. If not, see
 # <https://www.gnu.org/licenses/>.
 
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from datetime import datetime
+import threading
 import six  
 
+# Gerador de tokens para ativação de conta
 class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
         return (six.text_type(user.pk) + six.text_type(timestamp)  + six.text_type(user.is_active))
-
 account_activation_token = AccountActivationTokenGenerator()
+
+# Envia um email assíncrono
+def mail(subject, template_name, context, to_email):
+    def send_email():
+        try:
+            email = EmailMessage(subject, render_to_string(template_name, context), to=[to_email])
+            email.send()
+            print(datetime.now().strftime("[%d/%b/%Y %H:%M:%S] Email sent to " + to_email))
+        except Exception as e:
+            print(f"Error sending email: {str(e)}")
+
+    email_thread = threading.Thread(target=send_email)
+    email_thread.start()
