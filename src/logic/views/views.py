@@ -18,7 +18,6 @@
 
 from django.shortcuts import render, redirect
 from django.db.models import F
-import base64
 from ..models import Usuario, Turma, Vantagem, Transacao, Enum
 from ..permissions import *
 
@@ -34,15 +33,15 @@ def empresa(request):
 # Página para adicionar uma nova vantagem
 @somente_empresa
 def nova_vantagem(request):
-    if request.method == 'POST':
-        descricao = request.POST.get('descricao')
-        valor = request.POST.get('valor')
-        imagem = request.FILES.get('imagem')
-        if not (valor and imagem):
-            return render(request, 'empresa/nova_vantagem.html', {'erro': 'Preencha todos os campos.'})
-        Vantagem.objects.create(descricao=descricao, valor=valor, empresa=request.user.empresa, imagem=base64.b64encode(imagem.read()).decode('utf-8'))
-        return redirect('/empresa/')
-    return render(request, 'empresa/nova_vantagem.html')
+    if request.method != 'POST':
+        return render(request, 'empresa/nova_vantagem.html')
+    descricao = request.POST.get('descricao')
+    valor = request.POST.get('valor')
+    imagem = request.FILES.get('imagem')
+    if not (valor and imagem):
+        return render(request, 'empresa/nova_vantagem.html', {'erro': 'Preencha todos os campos.'})
+    Vantagem.objects.create(descricao=descricao, valor=valor, empresa=request.user.empresa, imagem=imagem.read())
+    return redirect('/empresa/')
 
 # Avança o semestre, adicionando moedas para os professores
 @somente_super

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 {% block content %}
 <div class="jumbotron">
     <h1 class="display-5">Bem-vinda empresa {{ user.username }}</h1>
 </div>
-
 <div class="row">
     <div class="col-md-8">
         <h2>Suas Vantagens</h2>
@@ -13,7 +13,7 @@
             <div class="card-deck">
                 {% for vantagem in vantagens %}
                     <div class="card mb-4">
-                        <img src="data:image/jpeg;base64,{{ vantagem.imagem }}" alt="{{ vantagem.descricao }}" class="card-img-top" style="max-height: 200px; object-fit: cover;">
+                        <img src="data:image/jpeg;base64,{{ vantagem.imagem|b64encode }}" alt="{{ vantagem.descricao }}" class="card-img-top" style="max-height: 200px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title">{{ vantagem.descricao }}</h5>
                             <p class="card-text">Valor: {{ vantagem.valor }}</p>
@@ -24,7 +24,6 @@
         {% endif %}
         <a class="btn btn-primary btn-lg mt-4" href="{% url 'nova_vantagem' %}" role="button">Cadastrar Vantagem</a>
     </div>
-
     <div class="col-md-4">
         <h2>Opções</h2>
         <ul class="list-group">

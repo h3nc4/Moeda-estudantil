@@ -64,7 +64,7 @@ class Empresa(models.Model):
 
 class Vantagem(models.Model):
     descricao = models.TextField()
-    imagem = models.TextField()
+    imagem = models.BinaryField()
     valor = models.PositiveIntegerField()
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
 
