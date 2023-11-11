@@ -29,7 +29,7 @@ def index(request):
 # Página principal para empresas
 @somente_empresa
 def empresa(request):
-    return render(request, 'empresa.html', {'vantagens': request.user.empresa.vantagem_set.all()})
+    return render(request, 'empresa/empresa.html', {'vantagens': request.user.empresa.vantagem_set.all()})
 
 # Página para adicionar uma nova vantagem
 @somente_empresa
@@ -39,10 +39,10 @@ def nova_vantagem(request):
         valor = request.POST.get('valor')
         imagem = request.FILES.get('imagem')
         if not (valor and imagem):
-            return render(request, 'nova_vantagem.html', {'erro': 'Preencha todos os campos.'})
+            return render(request, 'empresa/nova_vantagem.html', {'erro': 'Preencha todos os campos.'})
         Vantagem.objects.create(descricao=descricao, valor=valor, empresa=request.user.empresa, imagem=base64.b64encode(imagem.read()).decode('utf-8'))
         return redirect('/empresa/')
-    return render(request, 'nova_vantagem.html')
+    return render(request, 'empresa/nova_vantagem.html')
 
 # Avança o semestre, adicionando moedas para os professores
 @somente_super
