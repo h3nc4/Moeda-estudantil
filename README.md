@@ -6,7 +6,7 @@
 ├── docs/ - Documentação do projeto e descrição do sistema
 │   ├── casos_de_uso/ - Diagrama de casos de uso e histórias de usuário
 │   ├── classes/ - Diagrama de classes
-│   ├── db/ - Modelo ER e Definição da estratégia de acesso ao banco de dados
+│   ├── db/ - Modelo ER, Definição da estratégia de acesso ao banco de dados e comandos SQL
 │   ├── flow/ - Diagrama de Sequência
 │   ├── pdf/ - Apresentações e relatórios
 ├── scripts/ - Scripts de desenvolvimento e implantação
