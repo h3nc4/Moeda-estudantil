@@ -17,6 +17,8 @@
 # <https://www.gnu.org/licenses/>.
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
 from ..models import Usuario, Turma, Vantagem, Transacao
 from ..permissions import somente_professor, somente_aluno, somente_post, ou_professor_ou_aluno
 
@@ -49,6 +51,13 @@ def enviar_moeda(request, id):
         return render(request, 'error.html', {'erro': 'Não é possível enviar moedas negativas.'})
     if moedas > request.user.moedas:
         return render(request, 'error.html', {'erro': 'Você não tem moedas suficientes.'})
+    EmailMessage("O professor " + request.user.username + " enviou moedas para você",
+        render_to_string("email/profmoedas.html", {
+            'user': aluno_usr.username,
+            'professor': request.user.username,
+            'moedas': moedas,
+            'mensagem': mensagem,
+        }), to=[aluno_usr.email]).send()
     request.user.moedas -= moedas
     request.user.save() # Professor
     aluno_usr.moedas += moedas
@@ -62,11 +71,19 @@ def enviar_moeda(request, id):
 def comprar(request, id):
     vantagem = Vantagem.objects.get(id=id)
     aluno_usr = request.user
+    empresa_usr = vantagem.empresa.usuario
     if aluno_usr.moedas < vantagem.valor:
         return render(request, 'error.html', {'erro': 'Você não tem moedas suficientes.'})
     aluno_usr.moedas -= vantagem.valor
     aluno_usr.save()
     aluno_usr.aluno.vantagens.add(vantagem)
     aluno_usr.aluno.save()
-    Transacao.objects.create(moedas=vantagem.valor, de=aluno_usr, para=vantagem.empresa.usuario, vantagem_comprada=vantagem)
+    transacao = Transacao.objects.create(moedas=vantagem.valor, de=aluno_usr, para=vantagem.empresa.usuario, vantagem_comprada=vantagem)
+    EmailMessage("O aluno " + aluno_usr.username + " comprou uma vantagem",
+        render_to_string("email/nota_fiscal.html", {
+            'aluno': aluno_usr.username,
+            'empresa': empresa_usr.username,
+            'vantagem': vantagem.descricao,
+            'cupom': transacao.codigo,
+        }), to=[empresa_usr.email]).send()
     return redirect('/vantagens/')

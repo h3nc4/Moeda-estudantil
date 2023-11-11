@@ -44,7 +44,7 @@ def efetuar_ativacao(request, uidb64, token):
 # Envia um email de ativação para um usuário e o redireciona para a página de ativação
 def ativar_conta(request, user, email):
     email = EmailMessage("Ative sua conta",
-        render_to_string("conta/email_ativacao.html", {
+        render_to_string("email/ativacao.html", {
             'user': user.username,
             "protocolo": 'https' if request.is_secure() else 'http',
             'dominio': get_current_site(request).domain,
@@ -90,7 +90,7 @@ def recuperar_senha(request):
     if user is None:
         return render(request, 'conta/recuperar_senha.html', {'erro': 'Usuário não encontrado.'})
     email = EmailMessage("Redefinição de senha",
-        render_to_string("conta/email_redefinir_senha.html", {
+        render_to_string("email/redefinir_senha.html", {
             'user': user.username,
             "protocolo": 'https' if request.is_secure() else 'http',
             'dominio': get_current_site(request).domain,
@@ -173,9 +173,12 @@ def cadastro(request, template_name='conta/cadastro.html', user_type='aluno'):
 
         # Se o usuário for uma empresa, cria uma empresa
         elif user_type == 'empresa':
+            email = request.POST.get('email')
+            if not email:
+                return render(request, template_name, {'erro': 'Preencha todos os campos.'})
             tipo_e_objeto['empresa'] = Empresa.objects.create()
         usuario = Usuario.objects.create(username=nome, password=make_password(senha_crua), email=email, **tipo_e_objeto)
-        if user_type == 'aluno':
+        if user_type != 'professor':
             usuario.is_active = False
             usuario.save()
             return ativar_conta(request, usuario, email)
