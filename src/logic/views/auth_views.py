@@ -175,7 +175,7 @@ def cadastro(request, template_name='conta/cadastro.html', user_type='aluno'):
         elif user_type == 'empresa':
             tipo_e_objeto['empresa'] = Empresa.objects.create()
         usuario = Usuario.objects.create(username=nome, password=make_password(senha_crua), email=email, **tipo_e_objeto)
-        if user_type != 'professor':
+        if user_type == 'aluno':
             usuario.is_active = False
             usuario.save()
             return ativar_conta(request, usuario, email)
