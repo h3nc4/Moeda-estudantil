@@ -9,8 +9,8 @@ cd moeda-estudantil
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r src/requirements.txt
-python src/manage.py makemigrations
-python src/manage.py migrate
+python3 src/manage.py makemigrations
+python3 src/manage.py migrate
 ```
 
 Use `deactivate` para sair do ambiente virtual.
@@ -20,19 +20,19 @@ Use `source .venv/bin/activate` antes de executar qualquer dos seguintes comando
 ## Execução
 
 ```bash
-python src/manage.py runserver
+python3 src/manage.py runserver
 ```
 
 ## Criação do primeiro usuário
 
 ```bash
-python src/manage.py createsuperuser
+python3 src/manage.py createsuperuser
 ```
 
 ## Gerar modelo ER
 
 ```bash
-python src/manage.py graph_models logic -o tmp.dot
+python3 src/manage.py graph_models logic -o tmp.dot
 dot -Tpng tmp.dot -o ./docs/db/Modelo_ER.png
 rm tmp.dot
 ```

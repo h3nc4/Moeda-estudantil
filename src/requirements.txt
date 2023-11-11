@@ -3,11 +3,11 @@ argon2-cffi-bindings==21.2.0
 asgiref==3.7.2
 beautifulsoup4==4.12.2
 cffi==1.16.0
-Django==4.2.6
+Django==4.2.7
 django-extensions==3.2.3
 django-htmlmin==0.11.0
 html5lib==1.1
-Pillow==10.0.1
+Pillow==10.1.0
 psycopg2-binary==2.9.9
 pycparser==2.21
 six==1.16.0
