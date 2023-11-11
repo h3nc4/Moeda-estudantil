@@ -130,57 +130,58 @@ def cadastro_empresa(request):
 
 # Página de cadastro, por padrão realiza o cadastro de um aluno, mas pode ser usado para outros tipos de usuário
 def cadastro(request, template_name='conta/cadastro.html', user_type='aluno'):
-    if request.method == 'POST':
-        # Pega os dados em comum entre os todos os tipos de usuário
-        nome = request.POST.get('nome')
-        senha_crua = request.POST.get('senha')
-        email = request.POST.get('email')
-        if not (nome and senha_crua):
+    if request.method != 'POST':
+        return render(request, template_name)
+
+    # Pega os dados em comum entre os todos os tipos de usuário
+    nome = request.POST.get('nome')
+    senha_crua = request.POST.get('senha')
+    email = request.POST.get('email')
+    if not (nome and senha_crua):
+        return render(request, template_name, {'erro': 'Preencha todos os campos.'})
+    # Verifica se o usuário já existe
+    if Usuario.objects.filter(username=nome):
+        return render(request, template_name, {'erro': 'Usuário já cadastrado.'})
+
+    # Usado para enviar o objeto criado para o usuário
+    tipo_e_objeto = {}
+
+    # Se o usuário for um aluno, cria um endereço e um aluno
+    if user_type == 'aluno':
+        cpf = request.POST.get('cpf')
+        rg = request.POST.get('rg')
+        estado = request.POST.get('estado')
+        cidade = request.POST.get('cidade')
+        bairro = request.POST.get('bairro')
+        rua = request.POST.get('rua')
+        numero = request.POST.get('numero')
+        complemento = request.POST.get('complemento')
+        if not (email and cpf and rg and estado and cidade and bairro and rua and numero):
+            return render(request, template_name, {'erro': 'Preencha os campos obrigatórios.'})
+
+        tipo_e_objeto['aluno'] = Aluno.objects.create(cpf=cpf, rg=rg, 
+            # Cria o endereço ou pega um já existente com os mesmos dados
+            endereco=Endereco.objects.get_or_create(
+                estado=estado, cidade=cidade, bairro=bairro, rua=rua, numero=numero, complemento=complemento
+            )[0]
+        )
+
+    # Se o usuário for um professor, cria um professor
+    elif user_type == 'professor':
+        cpf = request.POST.get('cpf')
+        if not cpf:
             return render(request, template_name, {'erro': 'Preencha todos os campos.'})
-        # Verifica se o usuário já existe
-        if Usuario.objects.filter(username=nome):
-            return render(request, template_name, {'erro': 'Usuário já cadastrado.'})
+        tipo_e_objeto['professor'] = Professor.objects.create(cpf=cpf)
 
-        # Usado para enviar o objeto criado para o usuário
-        tipo_e_objeto = {}
-
-        # Se o usuário for um aluno, cria um endereço e um aluno
-        if user_type == 'aluno':
-            cpf = request.POST.get('cpf')
-            rg = request.POST.get('rg')
-            estado = request.POST.get('estado')
-            cidade = request.POST.get('cidade')
-            bairro = request.POST.get('bairro')
-            rua = request.POST.get('rua')
-            numero = request.POST.get('numero')
-            complemento = request.POST.get('complemento')
-            if not (email and cpf and rg and estado and cidade and bairro and rua and numero):
-                return render(request, template_name, {'erro': 'Preencha os campos obrigatórios.'})
-
-            tipo_e_objeto['aluno'] = Aluno.objects.create(cpf=cpf, rg=rg, 
-                # Cria o endereço ou pega um já existente com os mesmos dados
-                endereco=Endereco.objects.get_or_create(
-                    estado=estado, cidade=cidade, bairro=bairro, rua=rua, numero=numero, complemento=complemento
-                )[0]
-            )
-
-        # Se o usuário for um professor, cria um professor
-        elif user_type == 'professor':
-            cpf = request.POST.get('cpf')
-            if not cpf:
-                return render(request, template_name, {'erro': 'Preencha todos os campos.'})
-            tipo_e_objeto['professor'] = Professor.objects.create(cpf=cpf)
-
-        # Se o usuário for uma empresa, cria uma empresa
-        elif user_type == 'empresa':
-            email = request.POST.get('email')
-            if not email:
-                return render(request, template_name, {'erro': 'Preencha todos os campos.'})
-            tipo_e_objeto['empresa'] = Empresa.objects.create()
-        usuario = Usuario.objects.create(username=nome, password=make_password(senha_crua), email=email, **tipo_e_objeto)
-        if user_type != 'professor':
-            usuario.is_active = False
-            usuario.save()
-            return ativar_conta(request, usuario, email)
-        return redirect('/')
-    return render(request, template_name)
+    # Se o usuário for uma empresa, cria uma empresa
+    elif user_type == 'empresa':
+        email = request.POST.get('email')
+        if not email:
+            return render(request, template_name, {'erro': 'Preencha todos os campos.'})
+        tipo_e_objeto['empresa'] = Empresa.objects.create()
+    usuario = Usuario.objects.create(username=nome, password=make_password(senha_crua), email=email, **tipo_e_objeto)
+    if user_type != 'professor':
+        usuario.is_active = False
+        usuario.save()
+        return ativar_conta(request, usuario, email)
+    return redirect('/')
