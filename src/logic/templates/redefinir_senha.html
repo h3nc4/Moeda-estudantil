@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+    <!-- Se houver erro durante a redefinição de senha -->
+    {% if erro %}
+    <h1 class="display-4">Redefinição de senha</h1>
+    <p class="lead">{{ erro }}</p>
+    <p>Por favor, tente novamente mais tarde.</p>
+
+    <!-- Se o usuário recebeu o e-mail de redefinição de senha -->
+    {% elif sucesso %}
+    <h1 class="display-4">Redefinição de senha</h1>
+    <p class="lead">Sua senha foi redefinida com sucesso!</p>
+    <p>Por favor, faça o login novamente.</p>
+
+    <!-- Insere o formulário de redefinição de senha -->
+    {% else %}
+    <h1 class="display-4">Redefinição de senha</h1>
+    <p class="lead">Por favor, insira sua nova senha.</p>
+    <hr class="my-4">
+    <form action="{% url 'redefinir_senha' uidb64=uidb64 token=token %}" method="post" class="col-md-6 offset-md-3">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="senha">Senha</label>
+            <input type="password" name="senha" id="senha" class="form-control" placeholder="Senha" required>
+        </div>
+        <input type="submit" value="Cadastrar" class="btn btn-primary">
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

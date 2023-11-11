@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+
+    <!-- Se houver erro durante a ativação da conta -->
+    {% if erro %}
+    <h1 class="display-4">Ativação de Conta</h1>
+    <p class="lead">{{ erro }}</p>
+    <p>Por favor, tente novamente mais tarde.</p>
+
+    <!-- Se o usuário ainda não ativou a conta -->
+    {% elif not sucesso %}
+    <h1 class="display-4">Ativação de Conta</h1>
+    <p class="lead">Um token de ativação foi enviado para o seu e-mail.</p>
+    <p>Por favor, verifique seu e-mail e siga as instruções para ativar sua conta.</p>
+    <hr class="my-4">
+    <p>Se você não recebeu o e-mail, verifique sua pasta de spam.</p>
+
+    <!-- Se o usuário ativou a conta -->
+    {% else %}
+    <h1 class="display-4">Conta Ativada</h1>
+    <p class="lead">Sua conta foi ativada com sucesso!</p>
+    <p>Agora você pode fazer login.</p>
+    {% endif %}
+    
+</div>
+{% endblock %}

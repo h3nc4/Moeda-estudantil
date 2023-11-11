@@ -17,7 +17,7 @@
 # <https://www.gnu.org/licenses/>.
 
 from pathlib import Path
-from .secrets import KEY, DATABASE_PASSWORD
+from .secrets import KEY, DATABASE_PASSWORD, EMAIL_USER, EMAIL_PASSWORD
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -78,6 +78,15 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = 'True'
+EMAIL_HOST_USER = EMAIL_USER
+EMAIL_HOST_PASSWORD = EMAIL_PASSWORD
+
+PASSWORD_RESET_TIMEOUT_DAYS = 1
 
 AUTH_USER_MODEL = 'logic.Usuario'
 
