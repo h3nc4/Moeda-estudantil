@@ -1,6 +1,6 @@
 .venv
-static
 *.sqlite3
 __pycache__
 00*.py
 secrets.py
+favicon.ico
