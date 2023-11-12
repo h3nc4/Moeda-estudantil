@@ -85,4 +85,11 @@ def comprar(request, id):
             'vantagem': vantagem.descricao,
             'cupom': transacao.codigo,
         }, empresa_usr.email)
+    mail("Olá " + aluno_usr.username + ", você comprou uma vantagem",
+        "email/nota_fiscal_aluno.html", {
+            'aluno': aluno_usr.username,
+            'empresa': empresa_usr.username,
+            'vantagem': vantagem.descricao,
+            'cupom': transacao.codigo,
+        }, aluno_usr.email)
     return redirect('/vantagens/')
