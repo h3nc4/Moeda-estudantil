@@ -28,7 +28,10 @@ from ..permissions import somente_super
 
 # Ativação de conta após o usuário clicar no link enviado por email
 def efetuar_ativacao(request, uidb64, token):
-    user = get_object_or_404(Usuario, pk=force_str(urlsafe_base64_decode(uidb64)))
+    try:
+        user = get_object_or_404(Usuario, pk=force_str(urlsafe_base64_decode(uidb64)))
+    except:
+        return render(request, 'conta/ativar_conta.html', {'erro': 'Usuário não encontrado.'})
     if account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
@@ -50,7 +53,10 @@ def ativar_conta(request, user, email):
 # Redefine a senha de um usuário e o redireciona para a página inicial
 def redefinir_senha(request, uidb64, token):
     # Verifica se o token é válido e se o usuário existe
-    user = get_object_or_404(Usuario, pk=force_str(urlsafe_base64_decode(uidb64)))
+    try:
+        user = get_object_or_404(Usuario, pk=force_str(urlsafe_base64_decode(uidb64)))
+    except:
+        return render(request, 'conta/redefinir_senha.html', {'erro': 'Usuário não encontrado.'})
     if request.method != 'POST':
         if account_activation_token.check_token(user, token):
             return render(request, 'conta/redefinir_senha.html', {'uidb64': uidb64, 'token': token})
