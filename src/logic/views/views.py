@@ -16,7 +16,7 @@
 # General Public License along with Moeda estudantil. If not, see
 # <https://www.gnu.org/licenses/>.
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import F
 from ..models import Usuario, Turma, Vantagem, Transacao, Enum
 from ..permissions import *
@@ -60,7 +60,7 @@ def turmas(request):
 # Página de uma turma
 @somente_professor
 def turma(request, id):
-    turma = Turma.objects.get(id=id)
+    turma = get_object_or_404(Turma, id=id)
     return render(request, 'turma.html', {'professor': turma.professor_set.first(), 'alunos': turma.aluno_set.all(), 'turma': turma})
 
 # Cadastro de turmas, cria e insere uma turma no banco de dados

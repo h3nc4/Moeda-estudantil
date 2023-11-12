@@ -16,7 +16,7 @@
 # General Public License along with Moeda estudantil. If not, see
 # <https://www.gnu.org/licenses/>.
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, logout as logoff, login as logon
 from django.contrib.auth.hashers import make_password
 from django.contrib.sites.shortcuts import get_current_site
@@ -28,11 +28,8 @@ from ..permissions import somente_super
 
 # Ativação de conta após o usuário clicar no link enviado por email
 def efetuar_ativacao(request, uidb64, token):
-    try:
-        user = Usuario.objects.get(pk=force_str(urlsafe_base64_decode(uidb64)))
-    except:
-        user = None
-    if user is not None and account_activation_token.check_token(user, token):
+    user = get_object_or_404(Usuario, pk=force_str(urlsafe_base64_decode(uidb64)))
+    if account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
         return render(request, 'conta/ativar_conta.html', {'sucesso': True})
@@ -52,13 +49,10 @@ def ativar_conta(request, user, email):
 
 # Redefine a senha de um usuário e o redireciona para a página inicial
 def redefinir_senha(request, uidb64, token):
-    try:
-        user = Usuario.objects.get(pk=force_str(urlsafe_base64_decode(uidb64)))
-    except:
-        user = None
     # Verifica se o token é válido e se o usuário existe
+    user = get_object_or_404(Usuario, pk=force_str(urlsafe_base64_decode(uidb64)))
     if request.method != 'POST':
-        if user is not None and account_activation_token.check_token(user, token):
+        if account_activation_token.check_token(user, token):
             return render(request, 'conta/redefinir_senha.html', {'uidb64': uidb64, 'token': token})
         else: # Se o token não for válido, ou o usuário não existir, retorna um erro
             return render(request, 'conta/redefinir_senha.html', {'erro': 'Token inválido.'})

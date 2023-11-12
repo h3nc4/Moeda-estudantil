@@ -37,7 +37,7 @@ def enturmar(request):
 @somente_post
 @somente_professor
 def enviar_moeda(request, id):
-    aluno_usr = Usuario.objects.get(id=id).aluno.usuario
+    aluno_usr = get_object_or_404(Usuario, id=id).aluno.usuario
     moedas = request.POST.get('quantidade_moedas')
     mensagem = request.POST.get('mensagem')
     if not moedas:
@@ -68,7 +68,7 @@ def enviar_moeda(request, id):
 @somente_post
 @somente_aluno
 def comprar(request, id):
-    vantagem = Vantagem.objects.get(id=id)
+    vantagem = get_object_or_404(Vantagem, id=id)
     aluno_usr = request.user
     empresa_usr = vantagem.empresa.usuario
     if aluno_usr.moedas < vantagem.valor:
