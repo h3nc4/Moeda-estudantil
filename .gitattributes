@@ -1,0 +1,9 @@
+*.py eol=lf
+*.sh eol=lf
+*.txt eol=lf
+*.md eol=lf
+
+*.dia binary
+*.png binary
+*.jpg binary
+*.pdf binary

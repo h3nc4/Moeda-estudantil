@@ -18,6 +18,10 @@
 │   │  ├── views/ - Controladores
 ```
 
+## Instalação
+
+Veja [src/README.md](src/README.md) para instruções de instalação e execução do projeto.
+
 ## Descrição do sistema
 
 O Moeda Estudantil é um sistema de gerenciamento de moedas virtuais para escolas. O sistema permite que os professores recebam moedas a cada semestre e as distribuam para os alunos de acordo com seu desempenho. Os alunos podem trocar as moedas por recompensas publicadas por empresas parceiras e trocar cupons por produtos e serviços.

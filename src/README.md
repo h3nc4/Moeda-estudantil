@@ -1,5 +1,33 @@
 # Código fonte
 
+## Pré-requisitos
+
+Crie um arquivo secrets.py em src/app com o seguinte conteúdo:
+
+```python
+KEY='chave do django'
+DATABASE_PASSWORD='senha do banco de dados'
+EMAIL_USER='usuário do email'
+EMAIL_PASSWORD='senha do email'
+```
+
+Para gerar uma chave do django, use o seguinte comando:
+
+```bash
+python3 src/manage.py shell -c 'from django.core.management import utils; print(utils.get_random_secret_key())'
+```
+
+Caso não deseje usar postgresql, altere o arquivo src/app/settings.py para usar sqlite3.
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3',
+    }
+}
+```
+
 ## Instalação
 
 ```bash
