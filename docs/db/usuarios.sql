@@ -17,6 +17,3 @@ CREATE OR REPLACE VIEW public.usuarios
      LEFT JOIN logic_aluno aluno ON u.aluno_id = aluno.id
      LEFT JOIN logic_empresa empresa ON u.empresa_id = empresa.id
      LEFT JOIN logic_professor professor ON u.professor_id = professor.id;
-
-ALTER TABLE public.usuarios
-    OWNER TO developer;

@@ -30,16 +30,28 @@ DATABASES = {
 
 ## Instalação
 
-```bash
-sudo apt install python3 python3-pip python3-venv -y
-git clone https://github.com/h3nc4/Moeda-estudantil.git moeda-estudantil
-cd moeda-estudantil
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r src/requirements.txt
-python3 src/manage.py makemigrations
-python3 src/manage.py migrate
-```
+1. Instale o python3, pip3 e o venv:
+
+    ```bash
+    sudo apt install python3 python3-pip python3-venv -y
+    ```
+
+2. Clone o repositório e entre na pasta:
+
+    ```bash
+    git clone https://github.com/h3nc4/Moeda-estudantil.git moeda-estudantil
+    cd moeda-estudantil
+    ```
+
+3. Crie um ambiente virtual e instale as dependências:
+
+    ```bash
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r src/requirements.txt
+    python3 src/manage.py makemigrations
+    python3 src/manage.py migrate
+    ```
 
 Use `deactivate` para sair do ambiente virtual.
 
@@ -51,7 +63,7 @@ Use `source .venv/bin/activate` antes de executar qualquer dos seguintes comando
 python3 src/manage.py runserver
 ```
 
-## Criação do primeiro usuário
+## Criação do usuário admin
 
 ```bash
 python3 src/manage.py createsuperuser
@@ -60,7 +72,5 @@ python3 src/manage.py createsuperuser
 ## Gerar modelo ER
 
 ```bash
-python3 src/manage.py graph_models logic -o tmp.dot
-dot -Tpng tmp.dot -o ./docs/db/Modelo_ER.png
-rm tmp.dot
+python3 src/manage.py graph_models logic | dot -Tpng -o ./docs/db/Modelo_ER.png
 ```
