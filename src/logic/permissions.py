@@ -18,6 +18,7 @@
 
 from django.shortcuts import render
 from django.http import HttpResponseNotAllowed
+from logic.models import Enum
 
 # Página de erro 403, 'forbidden'
 def err403(request):
@@ -69,5 +70,12 @@ def somente_post(view_func):
     def wrapper(request, *args, **kwargs):
         if request.method != 'POST':
             return HttpResponseNotAllowed(['POST'])
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+def emails_ativos(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not Enum.objects.first().emails:
+            return err403(request)
         return view_func(request, *args, **kwargs)
     return wrapper

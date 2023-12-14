@@ -36,8 +36,15 @@
     <!-- Área de administrador -->
     {% elif user.is_superuser %}
     <a class="btn btn-primary btn-lg" href="{% url 'cadastro_professor' %}" role="button">Cadastrar Professor</a>
-    <a class="btn btn-primary btn-lg" href="{% url 'avanca_semestre' %}" role="button">Avançar Semestre</a>
     <a class="btn btn-primary btn-lg" href="{% url 'cadastrar_turma' %}" role="button">Cadastrar Turma</a>
+    <a class="btn btn-primary btn-lg" href="{% url 'avanca_semestre' %}" role="button">Avançar Semestre</a>
+    <a class="btn btn-primary btn-lg" href="{% url 'alternar_emails' %}" role="button">
+        {% if emails %}
+        Desativar Emails
+        {% else %}
+        Ativar Emails
+        {% endif %}
+    </a>
     {% endif %}
 
     <!-- Área de usuário não logado -->

@@ -18,6 +18,8 @@
   </div>
   <input type="submit" value="Logar" class="btn btn-primary">
   <p class="mt-3">Não tem uma conta? <a href="{% url 'cadastro' %}">Cadastre-se</a></p>
+  {% if emails %}
   <p>Esqueceu sua senha? <a href="{% url 'recuperar_senha' %}">Recupere</a></p>
+  {% endif %}
 </form>
 {% endblock %}

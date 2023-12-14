@@ -23,6 +23,7 @@ import random
 
 class Enum(models.Model):
     semestre = models.PositiveIntegerField(default=1)
+    emails = models.BooleanField(default=False)
 
 class Endereco(models.Model):
     estado = models.CharField(max_length=2)

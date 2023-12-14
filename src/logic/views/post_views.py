@@ -51,13 +51,14 @@ def enviar_moeda(request, id):
         return render(request, 'error.html', {'erro': 'Não é possível enviar moedas negativas.'})
     if moedas > request.user.moedas:
         return render(request, 'error.html', {'erro': 'Você não tem moedas suficientes.'})
-    mail("O professor " + request.user.username + " enviou moedas para você",
-        "email/profmoedas.html", {
-            'user': aluno_usr.username,
-            'professor': request.user.username,
-            'moedas': moedas,
-            'mensagem': mensagem,
-        }, aluno_usr.email)
+    if Enum.objects.first().emails:
+        mail("O professor " + request.user.username + " enviou moedas para você",
+            "email/profmoedas.html", {
+                'user': aluno_usr.username,
+                'professor': request.user.username,
+                'moedas': moedas,
+                'mensagem': mensagem,
+            }, aluno_usr.email)
     request.user.moedas -= moedas
     request.user.save() # Professor
     aluno_usr.moedas += moedas
@@ -79,20 +80,21 @@ def comprar(request, id):
     aluno_usr.aluno.vantagens.add(vantagem)
     aluno_usr.aluno.save()
     transacao = Transacao.objects.create(moedas=vantagem.valor, de=aluno_usr, para=vantagem.empresa.usuario, vantagem_comprada=vantagem)
-    mail("O aluno " + aluno_usr.username + " comprou uma vantagem",
-        "email/nota_fiscal.html", {
-            'aluno': aluno_usr.username,
-            'empresa': empresa_usr.username,
-            'vantagem': vantagem.descricao,
-            'cupom': transacao.codigo,
-        }, empresa_usr.email)
-    mail("Olá " + aluno_usr.username + ", você comprou uma vantagem",
-        "email/nota_fiscal_aluno.html", {
-            'aluno': aluno_usr.username,
-            'empresa': empresa_usr.username,
-            'vantagem': vantagem.descricao,
-            'cupom': transacao.codigo,
-        }, aluno_usr.email)
+    if Enum.objects.first().emails:
+        mail("O aluno " + aluno_usr.username + " comprou uma vantagem",
+            "email/nota_fiscal.html", {
+                'aluno': aluno_usr.username,
+                'empresa': empresa_usr.username,
+                'vantagem': vantagem.descricao,
+                'cupom': transacao.codigo,
+            }, empresa_usr.email)
+        mail("Olá " + aluno_usr.username + ", você comprou uma vantagem",
+            "email/nota_fiscal_aluno.html", {
+                'aluno': aluno_usr.username,
+                'empresa': empresa_usr.username,
+                'vantagem': vantagem.descricao,
+                'cupom': transacao.codigo,
+            }, aluno_usr.email)
     return redirect('/vantagens/')
 
 # Avança o semestre, adicionando moedas para os professores
@@ -108,4 +110,12 @@ def avanca_semestre(request):
 @somente_super
 def cadastrar_turma(request):
     Turma.objects.create()
+    return redirect('/')
+
+# Permite alternar a funcionalidade de envio de emails
+@somente_super
+def alternar_emails(request):
+    sys_config = Enum.objects.first()
+    sys_config.emails = not sys_config.emails
+    sys_config.save()
     return redirect('/')

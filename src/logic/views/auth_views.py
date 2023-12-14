@@ -23,8 +23,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from ..utils import mail, account_activation_token
-from ..models import Usuario, Aluno, Professor, Empresa, Endereco
-from ..permissions import somente_super
+from ..models import Enum, Usuario, Aluno, Professor, Empresa, Endereco
+from ..permissions import somente_super, emails_ativos
 
 # Ativação de conta após o usuário clicar no link enviado por email
 def efetuar_ativacao(request, uidb64, token):
@@ -39,6 +39,7 @@ def efetuar_ativacao(request, uidb64, token):
     return render(request, 'conta/ativar_conta.html', {'erro': 'Token inválido.'})
 
 # Envia um email de ativação para um usuário e o redireciona para a página de ativação
+@emails_ativos
 def ativar_conta(request, user, email):
     mail("Ative sua conta", "email/ativacao.html", {
         'user': user.username,
@@ -70,6 +71,7 @@ def redefinir_senha(request, uidb64, token):
     return render(request, 'conta/redefinir_senha.html', {'sucesso': True})
 
 # Página de redefinição de senha, recebe o email do usuário e manda um email de redefinição
+@emails_ativos
 def recuperar_senha(request):
     if request.method != 'POST':
         return render(request, 'conta/recuperar_senha.html')
@@ -94,7 +96,7 @@ def recuperar_senha(request):
 # Faz o login de um usuário e o redireciona para a página inicial
 def login(request):
     if request.method != 'POST':
-        return render(request, 'conta/login.html')
+        return render(request, 'conta/login.html', {'emails': Enum.objects.first().emails})
     user = authenticate(request, username=request.POST.get('nome'), password=request.POST.get('senha'))
     if not Usuario.objects.filter(username=request.POST.get('nome'), is_active=True):
         return render(request, 'conta/login.html', {'erro': 'Conta não ativada, verifique seu email.'})
@@ -170,7 +172,9 @@ def cadastro(request, template_name='conta/cadastro.html', user_type='aluno'):
         tipo_e_objeto['empresa'] = Empresa.objects.create()
     usuario = Usuario.objects.create(username=nome, password=make_password(senha_crua), email=email, **tipo_e_objeto)
     if user_type != 'professor':
-        usuario.is_active = False
-        usuario.save()
-        return ativar_conta(request, usuario, email)
+        if Enum.objects.first().emails:
+            usuario.is_active = False
+            usuario.save()
+            return ativar_conta(request, usuario, email)
+        logon(request, usuario)
     return redirect('/')

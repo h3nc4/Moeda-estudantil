@@ -20,7 +20,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from datetime import datetime
-import threading
+from threading import Thread
 import six  
 
 # Gerador de tokens para ativação de conta
@@ -38,6 +38,5 @@ def mail(subject, template_name, context, to_email):
             print(datetime.now().strftime("[%d/%b/%Y %H:%M:%S] Email sent to " + to_email))
         except Exception as e:
             print(f"Error sending email: {str(e)}")
-
-    email_thread = threading.Thread(target=send_email)
+    email_thread = Thread(target=send_email)
     email_thread.start()
