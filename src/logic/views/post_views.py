@@ -17,9 +17,10 @@
 # <https://www.gnu.org/licenses/>.
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import F
 from ..utils import mail
-from ..models import Usuario, Turma, Vantagem, Transacao
-from ..permissions import somente_professor, somente_aluno, somente_post, ou_professor_ou_aluno
+from ..models import Usuario, Turma, Vantagem, Transacao, Enum
+from ..permissions import *
 
 # Inscreve um usuário em uma turma, aceita apenas POST
 @somente_post
@@ -93,3 +94,18 @@ def comprar(request, id):
             'cupom': transacao.codigo,
         }, aluno_usr.email)
     return redirect('/vantagens/')
+
+# Avança o semestre, adicionando moedas para os professores
+@somente_super
+def avanca_semestre(request):
+    Usuario.objects.filter(professor__isnull=False).update(moedas=F('moedas') + 1000)
+    sys_config = Enum.objects.first()
+    sys_config.semestre += 1
+    sys_config.save()
+    return redirect('/')
+
+# Cadastro de turmas, cria e insere uma turma no banco de dados
+@somente_super
+def cadastrar_turma(request):
+    Turma.objects.create()
+    return redirect('/')

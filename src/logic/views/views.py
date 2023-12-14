@@ -17,13 +17,12 @@
 # <https://www.gnu.org/licenses/>.
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import F
-from ..models import Usuario, Turma, Vantagem, Transacao, Enum
+from ..models import Turma, Vantagem, Transacao, Enum
 from ..permissions import *
 
 # Página inicial
 def index(request):
-    return render(request, 'index.html', {'turmas': Turma.objects.all().count(), 'semestre': Enum.objects.first().semestre})
+    return render(request, 'index.html', {'turmas': Turma.objects.all().count(), 'semestre': Enum.objects.first().semestre, 'emails': Enum.objects.first().emails})
 
 # Página principal para empresas
 @somente_empresa
@@ -43,15 +42,6 @@ def nova_vantagem(request):
     Vantagem.objects.create(descricao=descricao, valor=valor, empresa=request.user.empresa, imagem=imagem.read())
     return redirect('/empresa/')
 
-# Avança o semestre, adicionando moedas para os professores
-@somente_super
-def avanca_semestre(request):
-    Usuario.objects.filter(professor__isnull=False).update(moedas=F('moedas') + 1000)
-    sys_config = Enum.objects.first()
-    sys_config.semestre += 1
-    sys_config.save()
-    return redirect('/')
-
 # Página de turmas
 @ou_professor_ou_aluno
 def turmas(request):
@@ -62,12 +52,6 @@ def turmas(request):
 def turma(request, id):
     turma = get_object_or_404(Turma, id=id)
     return render(request, 'turma.html', {'professor': turma.professor_set.first(), 'alunos': turma.aluno_set.all(), 'turma': turma})
-
-# Cadastro de turmas, cria e insere uma turma no banco de dados
-@somente_super
-def cadastrar_turma(request):
-    Turma.objects.create()
-    return redirect('/')
 
 # Página de vantagens
 @somente_aluno

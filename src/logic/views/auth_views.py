@@ -36,8 +36,7 @@ def efetuar_ativacao(request, uidb64, token):
         user.is_active = True
         user.save()
         return render(request, 'conta/ativar_conta.html', {'sucesso': True})
-    else:
-        return render(request, 'conta/ativar_conta.html', {'erro': 'Token inválido.'})
+    return render(request, 'conta/ativar_conta.html', {'erro': 'Token inválido.'})
 
 # Envia um email de ativação para um usuário e o redireciona para a página de ativação
 def ativar_conta(request, user, email):

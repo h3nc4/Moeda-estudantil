@@ -27,8 +27,8 @@ url_empresa = [
 
 url_admin = [
     path('cadastro_professor/', auth_views.cadastro_professor, name='cadastro_professor'),
-    path('avanca_semestre/', views.avanca_semestre, name='avanca_semestre'),
-    path('cadastrar_turma/', views.cadastrar_turma, name='cadastrar_turma'),
+    path('avanca_semestre/', post_views.avanca_semestre, name='avanca_semestre'),
+    path('cadastrar_turma/', post_views.cadastrar_turma, name='cadastrar_turma'),
 ]
 
 urlpatterns = [
