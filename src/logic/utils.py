@@ -21,7 +21,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from datetime import datetime
 from threading import Thread
-import six  
+import six
 
 # Gerador de tokens para ativação de conta
 class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
