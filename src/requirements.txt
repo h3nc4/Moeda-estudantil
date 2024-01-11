@@ -10,6 +10,7 @@ html5lib==1.1
 Pillow==10.1.0
 psycopg2-binary==2.9.9
 pycparser==2.21
+python-dotenv==1.0.0
 six==1.16.0
 soupsieve==2.5
 sqlparse==0.4.4

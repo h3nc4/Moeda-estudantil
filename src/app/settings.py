@@ -17,14 +17,17 @@
 # <https://www.gnu.org/licenses/>.
 
 from pathlib import Path
-from .secrets import KEY, DATABASE_PASSWORD, EMAIL_USER, EMAIL_PASSWORD
+from dotenv import load_dotenv
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = KEY
+if not load_dotenv():
+    print('No .env file found')
 
-DEBUG = True
+SECRET_KEY = os.getenv('SECRET_KEY', 'y5_5etwesuddup@f5!_@di*oo0uygrt5mi0x$+@6t13_iqz&0$')
+
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
@@ -72,20 +75,20 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'moeda',
-        'USER': 'developer',
-        'PASSWORD': DATABASE_PASSWORD,
+        'NAME': os.getenv('DATABASE_NAME', None),
+        'USER': os.getenv('DATABASE_USER', None),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', None),
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = 'True'
-EMAIL_HOST_USER = EMAIL_USER
-EMAIL_HOST_PASSWORD = EMAIL_PASSWORD
+EMAIL_HOST_USER = os.getenv('EMAIL_USER', None)
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD', None)
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 
 PASSWORD_RESET_TIMEOUT_DAYS = 1
 

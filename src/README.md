@@ -2,13 +2,22 @@
 
 ## Pré-requisitos
 
-Crie um arquivo secrets.py em src/app com o seguinte conteúdo:
+Crie um arquivo .env na raiz do projeto com as variáveis de ambiente:
 
-```python
-KEY='chave do django'
-DATABASE_PASSWORD='senha do banco de dados'
-EMAIL_USER='usuário do email'
-EMAIL_PASSWORD='senha do email'
+```bash
+mv .env.example .env
+```
+
+Preencha as variáveis de ambiente com os valores desejados:
+
+```bash
+SECRET_KEY = 'Chave secreta do django'
+DATABASE_NAME = 'Nome do banco de dados'
+DATABASE_USER = 'Usuário do banco de dados'
+DATABASE_PASSWORD = 'Senha do banco de dados'
+EMAIL_USER = 'Usuário do email de envio'
+EMAIL_PASSWORD = 'Senha do email de envio'
+EMAIL_HOST = 'Servidor de email de envio'
 ```
 
 Para gerar uma chave do django, use o seguinte comando:
@@ -48,6 +57,7 @@ DATABASES = {
     ```bash
     python3 -m venv .venv
     source .venv/bin/activate
+    pip install -U pip wheel setuptools
     pip install -r src/requirements.txt
     python3 src/manage.py makemigrations
     python3 src/manage.py migrate
